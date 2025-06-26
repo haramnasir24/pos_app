@@ -1,7 +1,10 @@
-import AuthButton from "./components/AuthButton";
+import { UserMenu } from "./components/UserMenu";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <main> <AuthButton/> </main>
+    <main>
+      <h1>POS App</h1>
+      <UserMenu/>
+    </main>
   );
 }
