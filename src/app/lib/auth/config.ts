@@ -5,6 +5,7 @@ export const authConfig: NextAuthConfig = {
   providers: [SquareProvider()],
   secret: process.env.AUTH_SECRET,
   trustHost: true,
+  debug: true,
   callbacks: {
     async session({ session, token }) {
       session.user.id = token.sub ?? "";

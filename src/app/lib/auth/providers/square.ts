@@ -5,18 +5,21 @@ export const SquareProvider = (): OAuthConfig<any> => ({
   name: "Square",
   type: "oauth",
   authorization: {
-    url: "https://connect.squareupsandbox.com/oauth2/authorize", // Updated to match the actual redirect
+    url: "https://connect.squareup.com/oauth2/authorize",
     params: {
       scope: "MERCHANT_PROFILE_READ",
       response_type: "code",
+      redirect_uri: "http://localhost:3000/api/auth/callback/square",
     },
   },
-  token: "https://connect.squareupsandbox.com/oauth2/token", // Keep this as connect. for API calls
-  checks: ["state"], // Disable PKCE, only use state parameter
+  token: {
+    url: "https://connect.squareup.com/oauth2/token",
+  },
+  checks: ["state"], // recommended
   userinfo: {
-    url: "https://connect.squareupsandbox.com/v2/merchants/me",
+    url: "https://connect.squareup.com/v2/merchants/me",
     async request({ tokens }: { tokens: { access_token: string } }) {
-      const res = await fetch("https://connect.squareupsandbox.com/v2/merchants/me", {
+      const res = await fetch("https://connect.squareup.com/v2/merchants/me", {
         headers: {
           Authorization: `Bearer ${tokens.access_token}`,
         },
