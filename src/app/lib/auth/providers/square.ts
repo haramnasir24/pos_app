@@ -9,13 +9,13 @@ export const SquareProvider = (): OAuthConfig<any> => ({
     params: {
       scope: "MERCHANT_PROFILE_READ",
       response_type: "code",
-      redirect_uri: "http://localhost:3000/api/auth/callback/square",
+      // redirect_uri: "http://localhost:3000/api/auth/casquare",
     },
   },
   token: {
     url: "https://connect.squareup.com/oauth2/token",
   },
-  checks: ["state"], // recommended
+  checks: ["state"],
   userinfo: {
     url: "https://connect.squareup.com/v2/merchants/me",
     async request({ tokens }: { tokens: { access_token: string } }) {

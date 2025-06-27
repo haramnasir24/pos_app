@@ -1,12 +1,6 @@
-# for directly testing the square oauth api
+// for directly testing the square oauth api without configuring for authjs
 
-## create this file in src/app/api/auth/square/callback/route.ts
-
-## change the redirect uri field in your square developer dashboard
-
-## also change the value of redirect uri in your env file
-
-<!-- import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
 export async function GET(req: NextRequest) {
@@ -61,4 +55,4 @@ export async function GET(req: NextRequest) {
     //   new URL("/oauth-result?status=error", req.url)
     // );
   }
-} -->
+}
