@@ -6,26 +6,28 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 
 export default function SignInPage() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const processedCodes = useRef<Set<string>>(new Set());
 
   useEffect(() => {
     // check if returning from Square OAuth
     const code = searchParams.get('code');
     const error = searchParams.get('error');
     
-    if (code && !isProcessing) {
+    if (code && !isProcessing && !processedCodes.current.has(code)) {
+      processedCodes.current.add(code);
       setIsProcessing(true);
       handleOAuthCallback(code);
     } else if (error) {
       setError(`OAuth error: ${error}`);
     }
-  }, [searchParams, isProcessing]);
+  }, [searchParams.toString()]); // Use searchParams.toString() instead of searchParams object
 
   const handleOAuthCallback = async (code: string) => {
     try {
