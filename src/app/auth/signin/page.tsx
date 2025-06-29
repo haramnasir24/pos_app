@@ -120,7 +120,7 @@ export default function SignInPage() {
     );
   }
 
-  // Check if we're in the middle of OAuth flow (has code parameter)
+  // Check if in the middle of OAuth flow (has code parameter)
   const hasOAuthCode = searchParams.get('code');
   
   // If user is already authenticated and not in OAuth flow, show sign-out option
@@ -310,13 +310,13 @@ export default function SignInPage() {
               borderTopColor: 'transparent',
               margin: '0 auto'
             })}></div>
-            <div className={css({
+            {/* <div className={css({
               position: 'absolute',
               inset: '0',
               borderRadius: '50%',
               border: '4px solid #dbeafe',
               animation: 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-            })}></div>
+            })}></div> */}
           </div>
           <div>
             <p className={css({
