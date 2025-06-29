@@ -1,4 +1,8 @@
-:root {
+@layer reset, base, tokens, recipes, utilities;
+
+
+
+/* :root {
   --background: #ffffff;
   --foreground: #171717;
 }
@@ -39,4 +43,4 @@ a {
   html {
     color-scheme: dark;
   }
-}
+} */

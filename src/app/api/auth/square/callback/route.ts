@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
   }
   
   try {
-    // Manual token exchange
+    // token exchange
     const tokenResponse = await fetch('https://connect.squareupsandbox.com/oauth2/token', {
       method: 'POST',
       headers: {
@@ -58,7 +58,7 @@ export async function GET(request: NextRequest) {
     const merchantResponse = await fetch('https://connect.squareupsandbox.com/v2/merchants/me', {
       headers: {
         'Authorization': `Bearer ${tokens.access_token}`,
-        'Square-Version': '2023-10-18',
+        'Square-Version': '2025-06-18',
       },
     });
     
