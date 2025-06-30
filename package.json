@@ -12,6 +12,7 @@
   "dependencies": {
     "@auth/core": "^0.40.0",
     "@auth/sveltekit": "^1.10.0",
+    "@tanstack/react-query": "^5.81.5",
     "axios": "^1.10.0",
     "next": "15.3.4",
     "next-auth": "5.0.0-beta.29",

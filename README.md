@@ -1,10 +1,31 @@
-# for directly testing the square oauth api
+# implement both server side and client side sessions
 
-## create this file in src/app/api/auth/square/callback/route.ts
+Step 6: Product Data Fetching
+Create useProducts hook with React Query
+Implement server-side rendering for initial product load
+Add infinite scrolling or pagination
+Step 7: Search & Filtering
+Implement debounced search functionality
+Create filter options (category, price range, etc.)
+Use React Query for search caching
+Step 8: Shopping Cart with Streaming UI
+Create cart context using React Context API
+Implement streaming UI for cart updates
+Create side drawer component with smooth animations
+Step 9: Product Cards with Quantity Controls
+Design responsive product cards
+Implement quantity controls that replace "Add to Cart" button
+Add loading states and error handling
+Step 10: Optimize Performance
+Implement proper loading states
+Add skeleton screens for better perceived performance
+Optimize images and implement lazy loading
 
-## change the redirect uri field in your square developer dashboard
 
-## also change the value of redirect uri in your env file
+Use Next.js server actions to integrate directly with Square POS APIs.
+Implement functions for product retrieval, discount and tax options, and order processing.
+Ensure Square API calls are made securely using authenticated sessions.
+
 
 <!-- import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";

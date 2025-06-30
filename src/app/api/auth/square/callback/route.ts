@@ -2,6 +2,8 @@
 // for this set redirect uri to http://localhost:3000/api/auth/square/callback at square developer portal
 // and go to http://localhost:3000/test-square to test the oauth flow
 
+// make this a server action
+
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -9,7 +11,6 @@ export async function GET(request: NextRequest) {
   const code = searchParams.get('code');
   const error = searchParams.get('error');
   
-  console.log('Manual Square callback received:');
   console.log('Code:', code);
   console.log('Error:', error);
   
@@ -54,7 +55,7 @@ export async function GET(request: NextRequest) {
     const tokens = JSON.parse(responseText);
     console.log('Successfully received tokens:', tokens);
     
-    // Now get merchant info
+    // get merchant info
     const merchantResponse = await fetch('https://connect.squareupsandbox.com/v2/merchants/me', {
       headers: {
         'Authorization': `Bearer ${tokens.access_token}`,
