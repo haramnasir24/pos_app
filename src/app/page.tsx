@@ -1,4 +1,4 @@
-import { UserMenu } from "./components/UserMenu";
+import { UserMenu } from "./components/home/UserMenu";
 
 export default function HomePage() {
   return (
