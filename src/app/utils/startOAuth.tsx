@@ -1,4 +1,5 @@
 // can i make this a server action?
+// change access permissions here
 
 export const startSquareOAuth = () => {
   const clientId =
@@ -9,7 +10,7 @@ export const startSquareOAuth = () => {
     "https://connect.squareupsandbox.com/oauth2/authorize"
   );
   authUrl.searchParams.set("client_id", clientId);
-  authUrl.searchParams.set("scope", "MERCHANT_PROFILE_READ ITEMS_READ");
+  authUrl.searchParams.set("scope", "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE"); 
   authUrl.searchParams.set("response_type", "code");
   authUrl.searchParams.set("redirect_uri", redirectUri);
 

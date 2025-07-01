@@ -8,8 +8,9 @@ type ProductSectionProps = {
   accessToken: string;
 };
 
+
 export default function ProductSection({ accessToken }: ProductSectionProps) {
-  const [params, setParams] = useState({ types: "item" });
+  const [params, setParams] = useState({ types: "item, image" });
   const { data, isPending, error } = useProductList(accessToken, params);
 
   console.log(data);
@@ -20,58 +21,72 @@ export default function ProductSection({ accessToken }: ProductSectionProps) {
       {error && <div>Error loading products</div>}
       {/*  TODO: create a separate product card component and apply pandacss to it */}
       {/*  TODO: ALSO UNDERSTAND THE RESPONSE FROM THE API*/}
-      {/*  TODO: look into how to get image urls*/}
-      {data && (
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-            gap: "1rem",
-          }}
-        >
-          {data.objects?.map((product: any) => {
-            const name = product.item_data.name ?? "Name unknown";
-            const variation =
-              product.item_data?.variations?.[0]?.item_variation_data;
-            const price = variation?.price_money?.amount ?? null;
-            const imageId = product.item_data?.image_ids?.[0] ?? null;
 
-            const imageUrl = imageId
-              ? `/images/${imageId}.jpg`
-              : "/placeholder.jpg";
-            return (
-              <div
-                key={product.id}
-                style={{
-                  border: "1px solid #eee",
-                  borderRadius: 8,
-                  padding: 16,
-                }}
-              >
-                <img
-                  src={imageUrl}
-                  alt={name}
-                  style={{
-                    width: "100%",
-                    height: 150,
-                    objectFit: "cover",
-                    borderRadius: 4,
-                  }}
-                  onError={(e) => (e.currentTarget.src = "/placeholder.jpg")}
-                />
-                <h3 className={css({ fontSize: "lg", fontWeight: "bold" })}>
-                  {name}
-                </h3>
-                <p className={css({ fontSize: "sm", color: "gray.600" })}>
-                  {price !== null
-                    ? `$${(price / 100).toFixed(2)}`
-                    : "Price not available"}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      )}
+      {data && (() => {
+        // build image map
+        const images = data.objects?.filter((obj: any) => obj.type === "IMAGE");
+        // research 'Record' data structure
+        const imageMap: Record<string, string> = {};
+        images.forEach((img: any) => {
+          imageMap[img.id] = img.image_data?.url;
+        });
+
+        // get items
+        const items = data.objects?.filter((obj: any) => obj.type === "ITEM");
+
+        // render product cards
+        return (
+          <div
+            className={css({
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", // research this 
+              gap: "4",
+            })}
+          >
+            {items.map((item: any) => {
+              const name = item.item_data?.name ?? "Name unknown";
+              const variation = item.item_data?.variations?.[0]?.item_variation_data;
+              const price = variation?.price_money?.amount ?? null;
+              const imageId = item.item_data?.image_ids?.[0];
+              const imageUrl = imageId ? imageMap[imageId] : "/placeholder.jpg";
+
+              return (
+                <div
+                  key={item.id}
+                  className={css({
+                    border: "1px solid",
+                    borderColor: "gray.200",
+                    borderRadius: "lg",
+                    padding: "4",
+                    background: "white",
+                    boxShadow: "sm",
+                  })}
+                >
+                  <img
+                    src={imageUrl}
+                    alt={name}
+                    className={css({
+                      width: "full",
+                      height: "40",
+                      borderRadius: "md",
+                      mb: "3",
+                    })}
+                    onError={(e) => (e.currentTarget.src = "/placeholder.jpg")} // set this 
+                  />
+                  <h3 className={css({ fontSize: "lg", fontWeight: "bold", mb: "1" })}>
+                    {name}
+                  </h3>
+                  <p className={css({ fontSize: "sm", color: "gray.600" })}>
+                    {price !== null
+                      ? `$${(price / 100).toFixed(2)}`
+                      : "Price not available"}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        );
+      })()} 
     </div>
   );
 }
