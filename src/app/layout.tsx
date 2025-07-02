@@ -1,7 +1,8 @@
 import "./globals.css";
+
+import { QueryProvider } from "./components/providers/QueryProvider";
 // import * as React from "react";
 import { SessionProviders } from "./components/providers/SessionProvider";
-import { QueryProvider } from "./components/providers/QueryProvider";
 
 export default function RootLayout({
   children,

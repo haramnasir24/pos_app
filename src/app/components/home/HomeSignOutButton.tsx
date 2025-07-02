@@ -1,8 +1,8 @@
 "use client";
 
 import { signOut } from "next-auth/react";
+
 import { css } from "../../../../styled-system/css";
-import { handleSignOut } from "../../utils/auth/handleSignOut";
 
 export function HomeSignOutButton() {
   return (

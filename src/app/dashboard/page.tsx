@@ -1,10 +1,11 @@
-import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import { css } from "../../../styled-system/css";
-import { stack, container, center } from "../../../styled-system/patterns";
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "../api/auth/[...nextauth]/route";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ProductSection from "../components/dashboard/ProductSection";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { css } from "../../../styled-system/css";
+import { center,container, stack } from "../../../styled-system/patterns";
 
 export default async function DashboardPage() {
   // protect the dashboard

@@ -1,10 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { css } from "../../../../styled-system/css";
+
 import { useProductList } from "@/app/hooks/useProductList";
-import SearchBar from "./SearchBar";
+
 import Loader from "./Loader";
+import SearchBar from "./SearchBar";
+import { css } from "../../../../styled-system/css";
+import Image from "next/image";
 
 type ProductSectionProps = {
   accessToken: string;
@@ -81,7 +84,7 @@ export default function ProductSection({ accessToken }: ProductSectionProps) {
                       boxShadow: "sm",
                     })}
                   >
-                    <img
+                    <Image
                       src={imageUrl}
                       alt={name}
                       className={css({

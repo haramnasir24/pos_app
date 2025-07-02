@@ -1,6 +1,7 @@
-import { flex } from "../../../../styled-system/patterns";
-import { css } from "../../../../styled-system/css";
 import { signIn } from "next-auth/react";
+
+import { css } from "../../../../styled-system/css";
+import { flex } from "../../../../styled-system/patterns";
 
 export default function SignInButton() {
   return (

@@ -1,13 +1,15 @@
 "use client";
 
-import { css } from "~/styled-system/css";
-import SignInText from "./components/home/SignInText";
-import ErrorComponent from "./components/home/ErrorComponent";
-import SignInButton from "./components/home/SignInButton";
 import { useSession } from "next-auth/react";
 import { useState } from "react";
-import Loader from "./components/home/Loader";
+
 import Authenticated from "./components/home/Authenticated";
+import ErrorComponent from "./components/home/ErrorComponent";
+import Loader from "./components/home/Loader";
+import SignInButton from "./components/home/SignInButton";
+import SignInText from "./components/home/SignInText";
+
+import { css } from "~/styled-system/css";
 
 export default function HomePage() {
   const { data: session, status } = useSession();

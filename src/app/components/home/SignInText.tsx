@@ -1,4 +1,5 @@
 import LockIcon from "@/app/components/home/LockIcon";
+
 import { css } from "../../../../styled-system/css";
 
 export default function SignInText() {

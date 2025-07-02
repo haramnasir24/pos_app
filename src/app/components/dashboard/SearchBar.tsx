@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+
 import { css } from "../../../../styled-system/css";
-import useDebounce from "@/app/hooks/useDebounce";
 
 interface SearchBarProps {
   setParams: (params: Record<string, any>) => void;

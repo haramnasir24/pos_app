@@ -1,7 +1,7 @@
 // gateway that connects Next.js app to the Auth.js authentication system
 
-import NextAuth from "next-auth";
 import type { NextAuthOptions } from "next-auth";
+import NextAuth from "next-auth";
 
 declare module "next-auth" {
   //extending the default session shape to store the Square merchant.id and business_name

@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
-import { promises as fsPromises } from "fs"; // research this
-import fs from "fs";
-import path from "path";
 import axios from "axios";
 import FormData from "form-data";
+import { promises as fsPromises } from "fs"; // research this
+import fs from "fs";
+import { NextRequest, NextResponse } from "next/server";
+import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
 const SQUARE_VERSION = "2025-06-18";
