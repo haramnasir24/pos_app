@@ -2,8 +2,25 @@
 
 ## use sdk alternatively for api requests to cursor
 
+## make components for reusable buttons
+
 check if search catalog products api can be used for search and filter aswell
-look into checkout management*
+look into checkout management
+inventory management api
+
+Phase 2: Product Listing and Cart
+Tasks:
+The homepage should display a list of products using Server-Side Rendering (SSR).
+Implement streaming UI for product added cart to improve perceived performance.
+Use Tanstack react query for data fetching and caching.
+
+Expectations:
+Homepage renders server-side for optimal performance.
+Product search and filtering are fast and accurate.
+Shopping cart uses streaming UI for improved perceived performance.
+All operations are secure and respect the user's authentication status.
+Implement well-defined component patterns (container/layout/UI) and use composition to build a modular and maintainable codebase.
+No global state management library is used; rely on React's built-in state management and context API if necessary.
 
 **Step 6: Product Data Fetching**
 Implement server-side rendering for initial product load
@@ -29,65 +46,7 @@ Implement proper loading states
 Add skeleton screens for better perceived performance
 Optimize images and implement lazy loading
 
-
 Use Next.js server actions to integrate directly with Square POS APIs.
 Implement functions for product retrieval, discount and tax options, and order processing.
 Ensure Square API calls are made securely using authenticated sessions.
 
-
-<!-- import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
-
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const code = searchParams.get("code");
-  const error = searchParams.get("error");
-
-  if (error) {
-    return NextResponse.redirect(
-      new URL("/oauth-result?status=denied", req.url)
-    );
-  }
-
-  if (!code) {
-    return new NextResponse("Missing authorization code.", { status: 400 });
-  }
-
-  try {
-    const tokenRes = await axios.post(
-      "https://connect.squareupsandbox.com/oauth2/token",
-      {
-        client_id: process.env.SQUARE_CLIENT_ID,
-        client_secret: process.env.SQUARE_CLIENT_SECRET,
-        code: code,
-        grant_type: "authorization_code",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-
-    const { access_token, refresh_token, merchant_id } = tokenRes.data;
-
-    console.log("Access Token:", access_token);
-    console.log("Refresh Token:", refresh_token);
-    console.log("Merchant ID:", merchant_id);
-
-    return NextResponse.json({ 
-      access_token, 
-      refresh_token, 
-      merchant_id 
-    });
-
-    // return NextResponse.redirect(
-    //   new URL("/oauth-result?status=approved", req.url)
-    // );
-  } catch (err) {
-    console.error("Token exchange error:", err);
-    // return NextResponse.redirect(
-    //   new URL("/oauth-result?status=error", req.url)
-    // );
-  }
-} -->

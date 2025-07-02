@@ -19,15 +19,7 @@ export default function SignInButton() {
           transform: "scale(1.02)",
           boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
         },
-        _focus: {
-          outline: "none",
-          ring: "2px",
-          ringColor: "#3b82f6",
-          ringOffset: "2px",
-        },
         transition: "all 0.2s",
-        transform: "scale(1)",
-        boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
       })}
     >
       <div

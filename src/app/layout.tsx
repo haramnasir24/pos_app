@@ -1,8 +1,9 @@
 import "./globals.css";
+// import * as React from "react";
 
 import { QueryProvider } from "./components/providers/QueryProvider";
-// import * as React from "react";
 import { SessionProviders } from "./components/providers/SessionProvider";
+import { CartContextProvider } from "./context/CartContext";
 
 export default function RootLayout({
   children,
@@ -12,9 +13,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SessionProviders>
-          <QueryProvider> {children}</QueryProvider>
-        </SessionProviders>
+        <CartContextProvider>
+          <SessionProviders>
+            <QueryProvider> {children}</QueryProvider>
+          </SessionProviders>
+        </CartContextProvider>
       </body>
     </html>
   );

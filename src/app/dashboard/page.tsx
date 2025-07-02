@@ -5,7 +5,7 @@ import { authOptions } from "../api/auth/[...nextauth]/route";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ProductSection from "../components/dashboard/ProductSection";
 import { css } from "../../../styled-system/css";
-import { center,container, stack } from "../../../styled-system/patterns";
+import { center, container, stack } from "../../../styled-system/patterns";
 
 export default async function DashboardPage() {
   // protect the dashboard
@@ -17,9 +17,34 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
+  // fetching products server side
+  let products = null;
+  // try {
+  //   const response = await fetch(
+  //     "https://connect.squareupsandbox.com/v2/catalog/search",
+  //     {
+  //       method: "POST",
+  //       headers: {
+  //         Authorization: `Bearer ${session.accessToken}`,
+  //         "Square-Version": "2025-06-18",
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         object_types: ["ITEM", "IMAGE"],
+  //         include_related_objects: false,
+  //       }),
+  //     }
+  //   );
+  //   if (response.ok) {
+  //     products = await response.json();
+  //   }
+  // } catch (e) {
+  //   // fail silently, fallback to client fetch
+  // }
+
   return (
     <div className={css({ minH: "100vh", bg: "gray.50" })}>
-      <DashboardHeader />
+      <DashboardHeader /> 
 
       <main className={css({ py: "12" })}>
         <div className={container({ maxW: "7xl" })}>
@@ -28,7 +53,7 @@ export default async function DashboardPage() {
               <div className={css({ textAlign: "center" })}>
                 <h2
                   className={css({
-                    fontSize: "4xl",
+                    fontSize: "3xl",
                     fontWeight: "bold",
                     color: "gray.900",
                     mb: "4",
@@ -40,7 +65,7 @@ export default async function DashboardPage() {
                   className={css({
                     fontSize: "lg",
                     color: "gray.600",
-                    maxW: "2xl",
+                    maxW: "1xl",
                     mx: "auto",
                   })}
                 >
@@ -51,7 +76,10 @@ export default async function DashboardPage() {
 
               {/* Product Section */}
 
-              <ProductSection accessToken={session.accessToken ?? ""} />
+              <ProductSection
+                accessToken={session.accessToken ?? ""}
+                products={products}
+              />
             </div>
           </div>
         </div>

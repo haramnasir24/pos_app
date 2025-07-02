@@ -8,19 +8,27 @@ import Loader from "./Loader";
 import SearchBar from "./SearchBar";
 import { css } from "../../../../styled-system/css";
 import Image from "next/image";
+import ProductCard from "./ProductCard";
+import CartDrawer from "./CartDrawer";
 
 type ProductSectionProps = {
   accessToken: string;
+  products?: any;
 };
 
-export default function ProductSection({ accessToken }: ProductSectionProps) {
+export default function ProductSection({
+  accessToken,
+  products,
+}: ProductSectionProps) {
   const [params, setParams] = useState({ types: "item, image" });
   const { data, isPending, error } = useProductList(accessToken, params);
 
-  console.log(data);
+  const productData = products || data; // if products rendered on server side or else get the client data through react query
 
   return (
     <div className={css({ w: "full", mt: "8" })}>
+      <CartDrawer />
+
       <div
         className={css({
           display: "flex",
@@ -35,13 +43,13 @@ export default function ProductSection({ accessToken }: ProductSectionProps) {
         />
       </div>
 
-      {isPending && <Loader />}
+      {isPending && !products && <Loader />}
       {error && <div>Error loading products</div>}
 
-      {data &&
+      {productData &&
         (() => {
           // build image map
-          const images = data.objects?.filter(
+          const images = productData.objects?.filter(
             (obj: any) => obj.type === "IMAGE"
           );
           // research 'Record' data structure
@@ -51,9 +59,11 @@ export default function ProductSection({ accessToken }: ProductSectionProps) {
           });
 
           // get items
-          const items = data.objects?.filter((obj: any) => obj.type === "ITEM");
+          const items = productData.objects?.filter(
+            (obj: any) => obj.type === "ITEM"
+          );
 
-          // render product cards
+          // render product cards using items and their images
           return (
             <div
               className={css({
@@ -73,45 +83,13 @@ export default function ProductSection({ accessToken }: ProductSectionProps) {
                   : "/placeholder.jpg";
 
                 return (
-                  <div
+                  <ProductCard
                     key={item.id}
-                    className={css({
-                      border: "1px solid",
-                      borderColor: "gray.200",
-                      borderRadius: "lg",
-                      padding: "4",
-                      background: "white",
-                      boxShadow: "sm",
-                    })}
-                  >
-                    <Image
-                      src={imageUrl}
-                      alt={name}
-                      className={css({
-                        width: "full",
-                        height: "40",
-                        borderRadius: "md",
-                        mb: "3",
-                      })}
-                      onError={(e) =>
-                        (e.currentTarget.src = "/placeholder.jpg")
-                      } // set this
-                    />
-                    <h3
-                      className={css({
-                        fontSize: "lg",
-                        fontWeight: "bold",
-                        mb: "1",
-                      })}
-                    >
-                      {name}
-                    </h3>
-                    <p className={css({ fontSize: "sm", color: "gray.600" })}>
-                      {price !== null
-                        ? `$${(price / 100).toFixed(2)}`
-                        : "Price not available"}
-                    </p>
-                  </div>
+                    id={item.id}
+                    name={name}
+                    price={price}
+                    imageUrl={imageUrl}
+                  />
                 );
               })}
             </div>

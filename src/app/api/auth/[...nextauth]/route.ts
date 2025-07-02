@@ -3,17 +3,6 @@
 import type { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth";
 
-declare module "next-auth" {
-  //extending the default session shape to store the Square merchant.id and business_name
-  interface Session {
-    accessToken?: string;
-    user: {
-      id?: string | null;
-      name?: string | null;
-      email?: string | null;
-    };
-  }
-}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -21,14 +10,16 @@ export const authOptions: NextAuthOptions = {
       id: "square",
       name: "Square",
       type: "oauth",
+      clientId: process.env.SQUARE_CLIENT_ID!,
+      clientSecret: process.env.SQUARE_CLIENT_SECRET!,
       authorization: {
         url: `${process.env.SQUARE_API_BASE}/oauth2/authorize`,
         params: {
-          scope: "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE",
-          // session: 'false',
+          scope: "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE", // permissions allowed
           response_type: "code",
         },
       },
+      // token exchange after receiving authorization code at the redirect callback uri
       token: {
         url: `${process.env.SQUARE_API_BASE}/oauth2/token`,
         async request({ params }) {
@@ -57,17 +48,7 @@ export const authOptions: NextAuthOptions = {
           const tokens = await response.json();
           console.log("Successfully received tokens:", tokens);
 
-          return { tokens }; // save these tokens
-
-          // how to add these to my session
-
-          // const result = await signIn("credentials", {
-          //   accessToken: data.tokens.access_token,
-          //   refreshToken: data.tokens.refresh_token,
-          //   merchantId: data.merchant.id,
-          //   merchantName: data.merchant.business_name,
-          //   redirect: false,
-          // });
+          return { tokens };
         },
       },
       userinfo: {
@@ -85,11 +66,9 @@ export const authOptions: NextAuthOptions = {
           );
           const data = await res.json();
           console.log(data.merchant);
-          return data;
+          return data; // check this data
         },
       },
-      clientId: process.env.SQUARE_CLIENT_ID!,
-      clientSecret: process.env.SQUARE_CLIENT_SECRET!,
       profile(profile) {
         return {
           id: profile.merchant?.id || "default-id",
@@ -101,6 +80,7 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
+    // jwt is used to persist custom properties in the token
     async jwt({ token, account, profile }) {
       if (account && profile) {
         token.sub =
@@ -124,11 +104,9 @@ export const authOptions: NextAuthOptions = {
       session.accessToken = token.accessToken as string;
       console.log("session:", session);
       console.log("session:", session.accessToken);
-      // console.log('session_token': session.account.access_token)
       return session;
     },
     async signIn({ account }) {
-      console.log("Authorization Code:", account?.code);
       console.log("Access Token:", account?.access_token);
       return true;
     },

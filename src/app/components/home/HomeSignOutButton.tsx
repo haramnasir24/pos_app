@@ -19,12 +19,6 @@ export function HomeSignOutButton() {
         _hover: {
           backgroundColor: "#f9fafb",
         },
-        _focus: {
-          outline: "none",
-          ring: "2px",
-          ringColor: "#3b82f6",
-          ringOffset: "2px",
-        },
         transition: "all 0.2s",
       })}
     >

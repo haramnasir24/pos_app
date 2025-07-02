@@ -36,7 +36,7 @@ export default function Authenticated({ session }: sessionProps) {
         >
           <div
             className={css({
-              margin: "0 auto",
+              margin: "0 auto", // horizontally centered within its parent
               height: "64px",
               width: "64px",
               backgroundColor: "#dcfce7",
@@ -130,15 +130,14 @@ export default function Authenticated({ session }: sessionProps) {
               >
                 {session.user?.name}
               </p>
-              {(session as any).merchantId && (
+              {session.user?.id && (
                 <p
                   className={css({
                     fontSize: "14px",
                     color: "#6b7280",
                   })}
                 >
-                  Merchant ID: {(session as any).merchantId}
-                  {/* Merchant ID: {session.user?.id} */}
+                  Merchant ID: {session.user?.id}
                 </p>
               )}
             </div>
@@ -165,14 +164,7 @@ export default function Authenticated({ session }: sessionProps) {
                 background: "linear-gradient(to right, #059669, #047857)",
                 transform: "scale(1.02)",
               },
-              _focus: {
-                outline: "none",
-                ring: "2px",
-                ringColor: "#10b981",
-                ringOffset: "2px",
-              },
               transition: "all 0.2s",
-              transform: "scale(1)",
             })}
           >
             Go to Dashboard

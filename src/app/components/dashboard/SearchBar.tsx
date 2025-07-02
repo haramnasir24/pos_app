@@ -7,29 +7,14 @@ interface SearchBarProps {
   prevParams?: Record<string, any>;
 }
 
+
+// search bar not working if i use SSR on initial product fetch
 export default function SearchBar({
   setParams,
   prevParams = {},
 }: SearchBarProps) {
   const [search, setSearch] = useState("");
 
-  // const debouncedSearch = useDebounce(search, 300);
-
-  // useEffect(() => {
-  //   if (debouncedSearch.length >= 3) {
-  //     setParams({
-  //       ...prevParams,
-  //       query: {
-  //         text_query: {
-  //           keywords: [search],
-  //         },
-  //       },
-  //     });
-  //   }
-  //   else if (debouncedSearch.length === 0) {
-  //     setParams({ ...prevParams, query: undefined });
-  //   }
-  // }, [debouncedSearch, setParams, prevParams]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
