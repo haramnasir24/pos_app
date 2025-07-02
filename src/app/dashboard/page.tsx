@@ -19,7 +19,7 @@ export default async function DashboardPage() {
       <main className={css({ py: "12" })}>
         <div className={container({ maxW: "7xl" })}>
           <div className={center({ maxW: "6xl", mx: "auto" })}>
-            <div className={stack({ gap: "8", align: "center" })}>
+            <div className={stack({ gap: "8" })}>
               <div className={css({ textAlign: "center" })}>
                 <h2
                   className={css({
@@ -45,6 +45,7 @@ export default async function DashboardPage() {
               </div>
 
               {/* Product Section */}
+
               <ProductSection accessToken={session?.accessToken || ""} />
             </div>
           </div>

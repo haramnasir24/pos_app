@@ -2,68 +2,17 @@
 
 ## use sdk alternatively for api requests to cursor
 
-**look into square apis
-catalog api 
 check if search catalog products api can be used for search and filter aswell
-check response of search catalog products
+look into checkout management*
 
-look into checkout management**
-
-
-
-For each product, you’ll need:
-A unique idempotency_key (can be a UUID or random string)
-An object of type ITEM
-item_data with:
-name (from your product title)
-description
-variations (at least one, with price in cents)
-Optionally, category_id, image_ids, etc.
-
-curl https://connect.squareupsandbox.com/v2/catalog/object \
-  -X POST \
-  -H 'Square-Version: 2025-06-18' \
-  -H 'Authorization: Bearer ACCESS_TOKEN' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "idempotency_key": "unique-key-1",
-    "object": {
-      "type": "ITEM",
-      "id": "#essence_mascara_lash_princess",
-      "item_data": {
-        "name": "Essence Mascara Lash Princess",
-        "description": "The Essence Mascara Lash Princess is a popular mascara known for its volumizing and lengthening effects. Achieve dramatic lashes with this long-lasting and cruelty-free formula.",
-        "variations": [
-          {
-            "id": "#essence_mascara_lash_princess_var",
-            "type": "ITEM_VARIATION",
-            "item_variation_data": {
-              "name": "Default",
-              "price_money": {
-                "amount": 999,
-                "currency": "USD"
-              },
-              "pricing_type": "FIXED_PRICING"
-            }
-          }
-        ]
-      }
-    }
-  }'
-
-You must first upload each image using the CreateCatalogImage endpoint.
-The response will give you an image_id.
-Then, add "image_ids": ["IMAGE_ID"] to your item_data
-
-Step 6: Product Data Fetching
+**Step 6: Product Data Fetching**
 Implement server-side rendering for initial product load
+Use React Query for search caching
 Add infinite scrolling or pagination
 
-Step 7: Search & Filtering
+**Step 7: Search & Filtering**
 Implement debounced search functionality
 Create filter options (category, price range, etc.)
-Use React Query for search caching
-
 
 Step 8: Shopping Cart with Streaming UI
 Create cart context using React Context API

@@ -5,13 +5,16 @@
 
 export async function fetchProducts(
   accessToken: string,
-  params?: Record<string, string>
+  params?: Record<string, any>
 ) {
   if (params) {
     const body = {
-      object_types: params.types.split(",").map((t) => t.trim().toUpperCase()),
-      // include_related_objects: true,
+      object_types: params.types.split(",").map((t: string) => t.trim().toUpperCase()),
+      query: params.query,
+      include_related_objects: false,
     };
+
+    console.log("body:", body)
 
     const response = await fetch("/api/products/searchCatalog", {
       method: "POST",

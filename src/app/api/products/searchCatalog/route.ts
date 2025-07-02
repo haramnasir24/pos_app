@@ -4,12 +4,13 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { object_types, include_related_objects } = await req.json();
+  const { object_types, query, include_related_objects } = await req.json();
   const accessToken = req.headers.get("authorization")?.replace("Bearer ", "");
 
   const url = "https://connect.squareupsandbox.com/v2/catalog/search";
   const body = {
     object_types,
+    query,
     include_related_objects,
   };
 
