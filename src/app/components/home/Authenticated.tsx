@@ -137,6 +137,7 @@ export default function Authenticated({ session }: sessionProps) {
                   })}
                 >
                   Merchant ID: {(session as any).merchantId}
+                  {/* Merchant ID: {session.user?.id} */}
                 </p>
               )}
             </div>

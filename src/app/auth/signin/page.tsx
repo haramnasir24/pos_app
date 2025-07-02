@@ -11,7 +11,7 @@ import { css } from "../../../../styled-system/css";
 import SignInText from "@/app/components/home/SignInText";
 import ErrorComponent from "@/app/components/home/ErrorComponent";
 import SignInButton from "@/app/components/home/SignInButton";
-import handleOAuthCallback from "@/app/utils/handleOAuthCallback";
+import handleOAuthCallback from "@/app/utils/auth/handleOAuthCallback";
 import Loader from "@/app/components/home/Loader";
 import Authenticated from "@/app/components/home/Authenticated";
 import AuthenticationProcessor from "@/app/components/home/AuthenticationProcessor";

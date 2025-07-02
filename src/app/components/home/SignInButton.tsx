@@ -1,11 +1,11 @@
-import { startSquareOAuth } from "@/app/utils/startOAuth";
-import { flex, grid, container } from "../../../../styled-system/patterns";
+import { flex } from "../../../../styled-system/patterns";
 import { css } from "../../../../styled-system/css";
+import { signIn } from "next-auth/react";
 
 export default function SignInButton() {
   return (
     <button
-      onClick={startSquareOAuth}
+      onClick={() => signIn("square", { callbackUrl: "/dashboard" })}
       className={css({
         width: "100%",
         background: "linear-gradient(to right, #2563eb, #4f46e5)",

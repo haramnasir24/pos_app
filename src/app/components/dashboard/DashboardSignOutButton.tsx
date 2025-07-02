@@ -1,12 +1,13 @@
 "use client";
 
+import { signOut } from "next-auth/react";
 import { css } from "../../../../styled-system/css";
-import { handleSignOut } from "@/app/utils/handleSignOut";
+import { handleSignOut } from "@/app/utils/auth/handleSignOut";
 
 export function DashboardSignOutButton() {
   return (
     <button
-      onClick={handleSignOut}
+      onClick={() => signOut({ callbackUrl: "/" })}
       className={css({
         px: "4",
         py: "2",

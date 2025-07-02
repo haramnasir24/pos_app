@@ -1,8 +1,11 @@
 "use client";
 
-import { useSession, signIn, signOut } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 export function UserMenu() {
+  console.log("SQUARE_API_BASE", process.env.SQUARE_API_BASE);
+  console.log("SQUARE_CLIENT_ID", process.env.SQUARE_CLIENT_ID);
+
   const { data: session, status } = useSession();
 
   console.log("UserMenu - Status:", status);
@@ -16,6 +19,8 @@ export function UserMenu() {
       <button onClick={() => signOut()}>Sign out</button>
     </div>
   ) : (
-    <button onClick={() => signIn("square")}>Sign in with Square</button>
+    <button onClick={() => signIn("square", { callbackUrl: "/dashboard" })}>
+      Sign in with Square
+    </button>
   );
 }

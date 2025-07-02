@@ -1,15 +1,19 @@
-import { auth } from "~/auth";
+import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { css } from "../../../styled-system/css";
 import { stack, container, center } from "../../../styled-system/patterns";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ProductSection from "../components/dashboard/ProductSection";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 export default async function DashboardPage() {
-  const session = await auth();
+  // protect the dashboard
+  const session = await getServerSession(authOptions);
+  console.log("session:", session);
+  console.log(session?.accessToken);
 
   if (!session) {
-    redirect("/api/auth/signin");
+    redirect("/");
   }
 
   return (
@@ -46,7 +50,7 @@ export default async function DashboardPage() {
 
               {/* Product Section */}
 
-              <ProductSection accessToken={session?.accessToken || ""} />
+              <ProductSection accessToken={session.accessToken ?? ""} />
             </div>
           </div>
         </div>

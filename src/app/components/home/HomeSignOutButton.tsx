@@ -2,12 +2,12 @@
 
 import { signOut } from "next-auth/react";
 import { css } from "../../../../styled-system/css";
-import { handleSignOut } from "../../utils/handleSignOut";
+import { handleSignOut } from "../../utils/auth/handleSignOut";
 
 export function HomeSignOutButton() {
   return (
     <button
-      onClick={handleSignOut}
+      onClick={() => signOut()}
       className={css({
         width: "100%",
         backgroundColor: "white",
