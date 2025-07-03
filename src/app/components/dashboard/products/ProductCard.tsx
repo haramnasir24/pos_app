@@ -1,14 +1,16 @@
 "use client";
 import { useContext } from "react";
-import { css } from "../../../../styled-system/css";
+import { css } from "../../../../../styled-system/css";
 import Image from "next/image";
-import { CartContext } from "../../context/CartContext";
+import { CartContext } from "../../../context/CartContext";
 
 interface ProductCardProps {
   id: string;
   name: string;
   price: number | null;
   imageUrl: string;
+  state?: string;
+  quantity?: string | number;
 }
 
 export default function ProductCard({
@@ -16,10 +18,17 @@ export default function ProductCard({
   name,
   price,
   imageUrl,
+  state,
+  quantity,
 }: ProductCardProps) {
   const { cart, addToCart, removeFromCart, updateQuantity } =
     useContext(CartContext);
   const cartItem = cart[id];
+  // * inventory management
+  const inventoryQty =
+    typeof quantity === "string" ? parseInt(quantity, 10) : quantity ?? 0;
+  const isOutOfStock = !inventoryQty || inventoryQty <= 0;
+  const atMaxQty = cartItem && cartItem.quantity >= inventoryQty;
 
   return (
     <div
@@ -66,6 +75,37 @@ export default function ProductCard({
       </p>
       <div
         className={css({
+          mt: "2",
+          display: "flex",
+          alignItems: "center",
+          gap: "2",
+        })}
+      >
+        <span
+          className={css({
+            px: "2",
+            py: "1",
+            borderRadius: "full",
+            fontSize: "xs",
+            fontWeight: "bold",
+            bg: state === "IN_STOCK" ? "green.100" : "red.100",
+            color: state === "IN_STOCK" ? "green.700" : "red.700",
+          })}
+        >
+          {state ?? "Unknown"}
+        </span>
+        <span
+          className={css({
+            fontSize: "sm",
+            color: "gray.700",
+            ml: "2",
+          })}
+        >
+          Qty: {quantity ?? "-"}
+        </span>
+      </div>
+      <div
+        className={css({
           display: "flex",
           alignItems: "center",
           gap: "2",
@@ -97,10 +137,13 @@ export default function ProductCard({
               className={css({
                 px: "2",
                 py: "1",
-                bg: "gray.200",
+                bg: atMaxQty ? "gray.100" : "gray.200",
                 borderRadius: "md",
+                color: atMaxQty ? "gray.400" : undefined,
+                cursor: atMaxQty ? "not-allowed" : undefined,
               })}
               onClick={() => updateQuantity(id, cartItem.quantity + 1)}
+              disabled={atMaxQty}
             >
               +
             </button>
@@ -114,22 +157,23 @@ export default function ProductCard({
         ) : (
           <button
             className={css({
-              mt: "2",
+              mt: "1",
               px: "4",
               py: "2",
-              bg: "gray.800",
-              color: "white",
+              bg: isOutOfStock ? "gray.200" : "gray.800",
+              color: isOutOfStock ? "gray.500" : "white",
               borderRadius: "md",
               fontWeight: "medium",
               fontSize: "md",
-              _hover: { bg: "gray.700" },
-              // _active: { bg: "blue.800" },
               transition: "all 0.2s",
               width: "100%",
+              _hover: isOutOfStock ? undefined : { bg: "gray.700" },
+              cursor: isOutOfStock ? "not-allowed" : undefined,
             })}
             onClick={() => addToCart({ id, name, price, imageUrl })}
+            disabled={isOutOfStock}
           >
-            Add to Cart
+            {isOutOfStock ? "Out of Stock" : "Add to Cart"}
           </button>
         )}
       </div>

@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
-import ProductSection from "../components/dashboard/ProductSection";
+import ProductSection from "../components/dashboard/products/ProductSection";
 import { css } from "../../../styled-system/css";
 import { center, container, stack } from "../../../styled-system/patterns";
 
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
 
   return (
     <div className={css({ minH: "100vh", bg: "gray.50" })}>
-      <DashboardHeader /> 
+      <DashboardHeader />
 
       <main className={css({ py: "12" })}>
         <div className={container({ maxW: "7xl" })}>

@@ -6,15 +6,20 @@ import { CartContext } from "../../context/CartContext";
 import { css, cx } from "../../../../styled-system/css";
 import Image from "next/image";
 
-export default function CartDrawer() {
+type CartDrawerProps = {
+  cartInventoryInfo: Record<string, { state: string; quantity: string }>;
+};
+
+export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
   const [open, setOpen] = useState(false);
-  // returns an array of all items in cart at the moment
+  // * returns an array of all items in cart at the moment
   const items = Object.values(cart);
   const total = items.reduce(
     (sum, item) => sum + (item.price ?? 0) * item.quantity,
     0
   );
+
 
   return (
     <>
@@ -74,76 +79,108 @@ export default function CartDrawer() {
           <p className={css({ color: "gray.500" })}>Your cart is empty.</p>
         ) : (
           <div className={css({ flex: 1, overflowY: "auto" })}>
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className={css({
-                  display: "flex",
-                  alignItems: "center",
-                  mb: "4",
-                })}
-              >
-                <Image
-                  src={item.imageUrl}
-                  alt={item.name}
-                  width={48}
-                  height={48}
-                  className={css({ borderRadius: "md", mr: "3" })}
-                />
-                <div className={css({ flex: 1 })}>
-                  <div
-                    className={css({ fontSize: "sm", fontWeight: "medium" })}
-                  >
-                    {item.name}
-                  </div>
-                  <div className={css({ color: "gray.600", fontSize: "xs" })}>
-                    ${item.price ? (item.price / 100).toFixed(2) : "N/A"}
-                  </div>
-                </div>
+            {items.map((item) => {
+              const inventory = cartInventoryInfo[item.id];
+              const state = inventory?.state ?? "Unknown";
+              const quantity = inventory?.quantity ?? "-";
+              const inventoryQty = typeof quantity === "string" ? parseInt(quantity, 10) : quantity ?? 0;
+              const atMaxQty = item.quantity >= inventoryQty;
+              return (
                 <div
+                  key={item.id}
                   className={css({
                     display: "flex",
                     alignItems: "center",
-                    gap: "1",
+                    mb: "4",
                   })}
                 >
-                  <button
+                  <Image
+                    src={item.imageUrl}
+                    alt={item.name}
+                    width={48}
+                    height={48}
+                    className={css({ borderRadius: "md", mr: "3" })}
+                  />
+                  <div className={css({ flex: 1 })}>
+                    <div className={css({ fontSize: "sm", fontWeight: "medium" })}>
+                      {item.name}
+                    </div>
+                    <div className={css({ color: "gray.600", fontSize: "xs" })}>
+                      ${item.price ? (item.price / 100).toFixed(2) : "N/A"}
+                    </div>
+                    {/* <div className={css({ mt: "1", display: "flex", alignItems: "center", gap: "2" })}>
+                      <span
+                        className={css({
+                          px: "2",
+                          py: "1",
+                          borderRadius: "full",
+                          fontSize: "xs",
+                          fontWeight: "bold",
+                          bg: state === "IN_STOCK" ? "green.100" : "red.100",
+                          color: state === "IN_STOCK" ? "green.700" : "red.700",
+                        })}
+                      >
+                        {state}
+                      </span>
+                      <span
+                        className={css({
+                          fontSize: "sm",
+                          color: "gray.700",
+                          ml: "2",
+                        })}
+                      >
+                        Qty: {quantity}
+                      </span>
+                    </div> */}
+                  </div>
+                  <div
                     className={css({
-                      px: "2",
-                      py: "1",
-                      bg: "gray.200",
-                      borderRadius: "md",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "1",
                     })}
-                    onClick={() => updateQuantity(item.id, item.quantity - 1)}
-                    disabled={item.quantity <= 1}
                   >
-                    -
-                  </button>
-                  <span className={css({ px: "2" })}>{item.quantity}</span>
-                  <button
-                    className={css({
-                      px: "2",
-                      py: "1",
-                      bg: "gray.200",
-                      borderRadius: "md",
-                    })}
-                    onClick={() => updateQuantity(item.id, item.quantity + 1)}
-                  >
-                    +
-                  </button>
-                  <button
-                    className={css({
-                      ml: "2",
-                      color: "red.500",
-                      fontSize: "sm",
-                    })}
-                    onClick={() => removeFromCart(item.id)}
-                  >
-                    Remove
-                  </button>
+                    <button
+                      className={css({
+                        px: "2",
+                        py: "1",
+                        bg: "gray.200",
+                        borderRadius: "md",
+                      })}
+                      onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                      disabled={item.quantity <= 1}
+                    >
+                      -
+                    </button>
+                    <span className={css({ px: "2" })}>{item.quantity}</span>
+                    <button
+                      className={css({
+                        px: "2",
+                        py: "1",
+                        bg: atMaxQty ? "gray.100" : "gray.200",
+                        borderRadius: "md",
+                        color: atMaxQty ? "gray.400" : undefined,
+                        cursor: atMaxQty ? "not-allowed" : undefined,
+                      })}
+                      onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                      disabled={atMaxQty}
+                    >
+                      +
+                    </button>
+                    <button
+                      className={css({
+                        ml: "2",
+                        color: "red.500",
+                        fontSize: "sm",
+                      })}
+                      onClick={() => removeFromCart(item.id)}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
         <div

@@ -1,6 +1,5 @@
 "use client";
 import { createContext, useState, useCallback } from "react";
-// look up react context and context providers or the contexta api
 
 export type CartItem = {
   id: string;
@@ -11,23 +10,23 @@ export type CartItem = {
 };
 
 export type Cart = {
-  // this is used to look up cart items using their ids
-  // an object of key of string type and value of cartItem type
+  // * this is used to look up cart items using their ids
+  // * an object of key of string type and value of cartItem type
   [id: string]: CartItem;
 };
 
-// shape of the cartContext object
+// * this defines the shape of the cartContext object
+// * cart is the current cart state
+// * addToCart function to add an item (without specifying quantity, which defaults to 1)
+// * using typescript utiliy type Omit
 interface CartContextType {
-  // cart is the current cart state
   cart: Cart;
-  // function to add an item (without specifying quantity, which defaults to 1)
-  // using typescript utiliy type
   addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
 }
 
-// context is initialised heree
+// * context is initialised here
 export const CartContext = createContext<CartContextType>({
   cart: {},
   addToCart: () => {},
@@ -35,10 +34,14 @@ export const CartContext = createContext<CartContextType>({
   updateQuantity: () => {},
 });
 
-export function CartContextProvider({ children }: { children: React.ReactNode }) {
+export function CartContextProvider({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const [cart, setCart] = useState<Cart>({});
 
-  // memoizing these functions ensures that their references dont change on every render
+  // * memoizing these functions ensures that their references dont change on every render
   const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
       if (prev[item.id]) {
@@ -81,8 +84,10 @@ export function CartContextProvider({ children }: { children: React.ReactNode })
   }, []);
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity }}>
+    <CartContext.Provider
+      value={{ cart, addToCart, removeFromCart, updateQuantity }}
+    >
       {children}
     </CartContext.Provider>
   );
-} 
+}

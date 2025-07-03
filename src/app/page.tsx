@@ -6,10 +6,11 @@ import { useState } from "react";
 import Authenticated from "./components/home/Authenticated";
 import ErrorComponent from "./components/home/ErrorComponent";
 import Loader from "./components/home/Loader";
-import SignInButton from "./components/home/SignInButton";
-import SignInText from "./components/home/SignInText";
+
 
 import { css } from "~/styled-system/css";
+import SignInText from "./components/home/sign-in/SignInText";
+import SignInButton from "./components/home/sign-in/SignInButton";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
