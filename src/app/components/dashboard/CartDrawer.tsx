@@ -1,4 +1,6 @@
 "use client";
+
+import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useContext, useState } from "react";
 import { CartContext } from "../../context/CartContext";
 import { css, cx } from "../../../../styled-system/css";
@@ -32,7 +34,7 @@ export default function CartDrawer() {
         })}
         onClick={() => setOpen(true)}
       >
-        Cart ({items.length})
+        Cart ({items.length}){/* <MdOutlineAddShoppingCart /> */}
       </button>
       <div
         className={cx(
@@ -89,7 +91,9 @@ export default function CartDrawer() {
                   className={css({ borderRadius: "md", mr: "3" })}
                 />
                 <div className={css({ flex: 1 })}>
-                  <div className={css({ fontSize: "sm", fontWeight: "medium" })}>
+                  <div
+                    className={css({ fontSize: "sm", fontWeight: "medium" })}
+                  >
                     {item.name}
                   </div>
                   <div className={css({ color: "gray.600", fontSize: "xs" })}>

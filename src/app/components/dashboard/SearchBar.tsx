@@ -56,8 +56,8 @@ export default function SearchBar({
           fontSize: "md",
           outline: "none",
           _focus: {
-            borderColor: "blue.500",
-            boxShadow: "0 0 0 2px #3b82f6",
+            borderColor: "gray.800",
+            boxShadow: "0 0 0 2px rgb(61, 63, 64)",
           },
           transition: "border-color 0.2s, box-shadow 0.2s",
         })}
@@ -68,18 +68,19 @@ export default function SearchBar({
         className={css({
           px: "4",
           py: "2",
-          bg: "blue.600",
+          bg: "gray.700",
           color: "white",
           borderRadius: "md",
           fontWeight: "medium",
           fontSize: "md",
+          cursor: "pointer",
           _hover: {
-            bg: "blue.700",
-            transform: "scale(1.03)",
+            bg: "gray.800",
+            // transform: "scale(1.03)",
             boxShadow: "md",
           },
           _active: {
-            bg: "blue.800",
+            bg: "gray.800",
           },
           transition: "all 0.2s",
         })}

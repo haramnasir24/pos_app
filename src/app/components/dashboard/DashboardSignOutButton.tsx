@@ -11,25 +11,26 @@ export function DashboardSignOutButton() {
       className={css({
         px: "4",
         py: "2",
-        bg: "red.600",
+        bg: "red.500",
         color: "white",
         rounded: "lg",
         fontSize: "sm",
         fontWeight: "medium",
         transition: "all 0.2s",
+        cursor: "pointer",
         _hover: {
-          bg: "red.700",
-          transform: "translateY(-1px)",
+          bg: "red.600",
+          // transform: "translateY(-1px)",
           shadow: "md",
         },
-        _active: {
-          transform: "translateY(0)",
-        },
-        _focus: {
-          outline: "2px solid",
-          outlineColor: "red.300",
-          outlineOffset: "2px",
-        },
+        // _active: {
+        //   transform: "translateY(0)",
+        // },
+        // _focus: {
+        //   outline: "2px solid",
+        //   outlineColor: "gray.500",
+        //   outlineOffset: "2px",
+        // },
       })}
     >
       Sign Out

@@ -3,7 +3,6 @@
 import type { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth";
 
-
 export const authOptions: NextAuthOptions = {
   providers: [
     {
@@ -15,7 +14,8 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         url: `${process.env.SQUARE_API_BASE}/oauth2/authorize`,
         params: {
-          scope: "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE", // permissions allowed
+          scope:
+            "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE INVENTORY_READ INVENTORY_WRITE", // permissions allowed
           response_type: "code",
         },
       },

@@ -42,7 +42,7 @@ export default function ProductCard({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          mb: "3",
+          mb: "2",
         })}
       >
         <Image
@@ -56,7 +56,7 @@ export default function ProductCard({
         />
       </div>
 
-      <h3 className={css({ fontSize: "md", fontWeight: "semibold", mb: "1" })}>
+      <h3 className={css({ fontSize: "sm", fontWeight: "semibold" })}>
         {name}
       </h3>
       <p className={css({ fontSize: "sm", color: "gray.600" })}>
@@ -117,13 +117,13 @@ export default function ProductCard({
               mt: "2",
               px: "4",
               py: "2",
-              bg: "blue.600",
+              bg: "gray.800",
               color: "white",
               borderRadius: "md",
               fontWeight: "medium",
               fontSize: "md",
-              _hover: { bg: "blue.700" },
-              _active: { bg: "blue.800" },
+              _hover: { bg: "gray.700" },
+              // _active: { bg: "blue.800" },
               transition: "all 0.2s",
               width: "100%",
             })}

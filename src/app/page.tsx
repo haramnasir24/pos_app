@@ -57,7 +57,7 @@ export default function HomePage() {
           >
             <SignInText />
 
-            {error && <ErrorComponent error={error} />}
+            {/* {error && <ErrorComponent error={error} />} */}
 
             <SignInButton />
 

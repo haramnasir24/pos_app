@@ -4,6 +4,22 @@
 
 ## make components for reusable buttons
 
+## implement locat storage to maintain the cart between re-renders
+
+## wrap the product section in a suspense
+
+## how to implement SSR for product listings, as it also requires to use react query for data fetching (client side)
+
+## do i check inventory at checkout or during adding to cart
+
+## adjust inventory after checkout and order confirmation
+
+**When updating inventory, you need four key pieces of information: the item's variation ID (to identify the specific product), the inventory state change, the location ID (to specify which store), and a timestamp (to track when the change happened).**
+
+
+
+## is react query caching my data, how
+
 check if search catalog products api can be used for search and filter aswell
 look into checkout management
 inventory management api
