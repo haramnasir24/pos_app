@@ -1,43 +1,46 @@
 import { useEffect, useState } from "react";
+import { css } from "~/styled-system/css";
+
+type CategoryObj = { id: string; name: string };
 
 interface FilterDrawerProps {
   open: boolean;
   onClose: () => void;
-  onApply: (selectedCategories: string[]) => void;
-  initialSelected?: string[];
+  onApply: (selectedCategories: CategoryObj[]) => void;
+  categoryObjects: CategoryObj[];
 }
 
-export default function FilterDrawer({ open, onClose, onApply, initialSelected = [] }: FilterDrawerProps) {
-  const [categories, setCategories] = useState<string[]>([]);
-  const [selected, setSelected] = useState<string[]>(initialSelected);
-  const [loading, setLoading] = useState(false);
+export default function FilterDrawer({
+  open,
+  onClose,
+  onApply,
+  categoryObjects,
+}: FilterDrawerProps) {
+  const [selected, setSelected] = useState<CategoryObj[]>([]);
 
-  useEffect(() => {
-    if (open) {
-      setLoading(true);
-      fetch("/src/app/constant/data.json")
-        .then((res) => res.json())
-        .then((data) => {
-          const cats = Array.from(new Set(data.products.map((p: any) => String(p.category)))) as string[];
-          setCategories(cats);
-          setLoading(false);
-        })
-        .catch(() => setLoading(false));
-    }
-  }, [open]);
+  // * reset selected when drawer opens
+  // useEffect(() => {
+  //   if (open) setSelected([]);
+  // }, [open]);
 
-  useEffect(() => {
-    setSelected(initialSelected);
-  }, [initialSelected, open]);
-
-  const handleToggle = (cat: string) => {
+  // * adds or removes a category object from the selected list
+  const handleToggle = (category: CategoryObj) => {
     setSelected((prev) =>
-      prev.includes(cat) ? prev.filter((c) => c !== cat) : [...prev, cat]
+      prev.some((c) => c.id === category.id)
+        ? prev.filter((c) => c.id !== category.id)
+        : [...prev, category]
     );
   };
 
+  // * passes the selected category objects and then closes the drawer
   const handleApply = () => {
     onApply(selected);
+    onClose();
+  };
+
+  const handleClear = () => {
+    setSelected([]);
+    onApply([]); // * call the API with no filter query
     onClose();
   };
 
@@ -46,71 +49,110 @@ export default function FilterDrawer({ open, onClose, onApply, initialSelected =
       {/* Overlay */}
       {open && (
         <div
-          style={{
+          className={css({
             position: "fixed",
             top: 0,
             left: 0,
             width: "100vw",
             height: "100vh",
-            background: "rgba(0,0,0,0.2)",
+            bg: "blackAlpha.200",
             zIndex: 99,
-          }}
+          })}
           onClick={onClose}
         />
       )}
       {/* Drawer */}
       <div
-        style={{
+        className={css({
           position: "fixed",
           top: 0,
           left: 0,
           height: "100vh",
-          width: 320,
-          background: "#fff",
-          boxShadow: "2px 0 8px rgba(0,0,0,0.08)",
+          width: 80,
+          bg: "white",
+          boxShadow: "lg",
           zIndex: 100,
           transform: open ? "translateX(0)" : "translateX(-100%)",
           transition: "transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
           display: "flex",
           flexDirection: "column",
-          padding: 24,
-        }}
+          p: 6,
+        })}
       >
-        <button style={{ alignSelf: "flex-end", fontSize: 24, background: "none", border: "none", cursor: "pointer" }} onClick={onClose}>&times;</button>
-        <h2 style={{ fontWeight: 700, fontSize: 22, marginBottom: 16 }}>Filter by Category</h2>
-        {loading ? (
-          <div>Loading...</div>
-        ) : (
-          <div style={{ flex: 1, overflowY: "auto" }}>
-            {categories.map((cat) => (
-              <label key={cat} style={{ display: "flex", alignItems: "center", marginBottom: 12, cursor: "pointer" }}>
+        <button
+          className={css({
+            alignSelf: "flex-end",
+            fontSize: "2xl",
+            bg: "none",
+            border: "none",
+            cursor: "pointer",
+            mb: 2,
+          })}
+          onClick={onClose}
+        >
+          &times;
+        </button>
+        <h2 className={css({ fontWeight: "bold", fontSize: "2xl", mb: 4 })}>
+          Filter by Category
+        </h2>
+
+        {open && (
+          <div className={css({ flex: 1, overflowY: "auto" })}>
+            {categoryObjects.map((category) => (
+              <label
+                key={category.id}
+                className={css({
+                  display: "flex",
+                  alignItems: "center",
+                  mb: 3,
+                  cursor: "pointer",
+                })}
+              >
                 <input
                   type="checkbox"
-                  checked={selected.includes(cat)}
-                  onChange={() => handleToggle(cat)}
-                  style={{ marginRight: 8 }}
+                  checked={selected.some((c) => c.id === category.id)}
+                  onChange={() => handleToggle(category)}
+                  className={css({ mr: 2, cursor: "pointer" })}
                 />
-                {cat}
+                {category.name}
               </label>
             ))}
           </div>
         )}
+
         <button
-          style={{
-            marginTop: 24,
-            padding: "10px 0",
-            background: "#2563eb",
-            color: "#fff",
+          className={css({
+            mt: 6,
+            py: 3,
+            bg: "blue.600",
+            color: "white",
             border: "none",
-            borderRadius: 6,
-            fontWeight: 600,
-            fontSize: 16,
+            borderRadius: "md",
+            fontWeight: "semibold",
+            fontSize: "lg",
             cursor: "pointer",
-          }}
+            _hover: { bg: "blue.700" },
+          })}
           onClick={handleApply}
-          disabled={loading}
         >
           Apply Filter
+        </button>
+        <button
+          className={css({
+            mt: 2,
+            py: 3,
+            bg: "gray.200",
+            color: "black",
+            border: "none",
+            borderRadius: "md",
+            fontWeight: "semibold",
+            fontSize: "lg",
+            cursor: "pointer",
+            _hover: { bg: "gray.300" },
+          })}
+          onClick={handleClear}
+        >
+          Clear Filter
         </button>
       </div>
     </>

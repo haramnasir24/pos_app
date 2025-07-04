@@ -20,7 +20,6 @@ export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
     0
   );
 
-
   return (
     <>
       <button
@@ -67,10 +66,11 @@ export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
             mb: "4",
             color: "gray.600",
             fontSize: "xl",
+            cursor: "pointer",
           })}
           onClick={() => setOpen(false)}
         >
-          ×
+          &times;
         </button>
         <h2 className={css({ fontSize: "2xl", fontWeight: "bold", mb: "4" })}>
           Shopping Cart
@@ -83,7 +83,10 @@ export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
               const inventory = cartInventoryInfo[item.id];
               const state = inventory?.state ?? "Unknown";
               const quantity = inventory?.quantity ?? "-";
-              const inventoryQty = typeof quantity === "string" ? parseInt(quantity, 10) : quantity ?? 0;
+              const inventoryQty =
+                typeof quantity === "string"
+                  ? parseInt(quantity, 10)
+                  : quantity ?? 0;
               const atMaxQty = item.quantity >= inventoryQty;
               return (
                 <div
@@ -102,36 +105,14 @@ export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
                     className={css({ borderRadius: "md", mr: "3" })}
                   />
                   <div className={css({ flex: 1 })}>
-                    <div className={css({ fontSize: "sm", fontWeight: "medium" })}>
+                    <div
+                      className={css({ fontSize: "sm", fontWeight: "medium" })}
+                    >
                       {item.name}
                     </div>
                     <div className={css({ color: "gray.600", fontSize: "xs" })}>
                       ${item.price ? (item.price / 100).toFixed(2) : "N/A"}
                     </div>
-                    {/* <div className={css({ mt: "1", display: "flex", alignItems: "center", gap: "2" })}>
-                      <span
-                        className={css({
-                          px: "2",
-                          py: "1",
-                          borderRadius: "full",
-                          fontSize: "xs",
-                          fontWeight: "bold",
-                          bg: state === "IN_STOCK" ? "green.100" : "red.100",
-                          color: state === "IN_STOCK" ? "green.700" : "red.700",
-                        })}
-                      >
-                        {state}
-                      </span>
-                      <span
-                        className={css({
-                          fontSize: "sm",
-                          color: "gray.700",
-                          ml: "2",
-                        })}
-                      >
-                        Qty: {quantity}
-                      </span>
-                    </div> */}
                   </div>
                   <div
                     className={css({
@@ -212,12 +193,16 @@ export default function CartDrawer({ cartInventoryInfo }: CartDrawerProps) {
         </div>
       </div>
       {open && (
+        // * creates the background overlay
         <div
           className={css({
             position: "fixed",
-            inset: 0,
-            bg: "blackAlpha.400",
-            zIndex: 90,
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.2)",
+            zIndex: 99,
           })}
           onClick={() => setOpen(false)}
         />

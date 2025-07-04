@@ -14,6 +14,8 @@ export async function POST(req: NextRequest) {
     include_related_objects,
   };
 
+  console.log("body:", body);
+
   const res = await fetch(url, {
     method: "POST",
     headers: {

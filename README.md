@@ -1,18 +1,24 @@
 # use server actions for post requests (throughout code)
 
-## use sdk alternatively for api requests to cursor
+## implement hybrid (ssr for initial products listing on mount and client fetch using hooks for filter and search)
+
+## add both queries of search and filter in api fetch
+
+## implement local storage to maintain the cart between re-renders
 
 ## make components for reusable buttons
 
-## implement locat storage to maintain the cart between re-renders
-
 ## wrap the product section in a suspense
-
-## how to implement SSR for product listings, as it also requires to use react query for data fetching (client side)
 
 ## do i check inventory at checkout or during adding to cart
 
 ## adjust inventory after checkout and order confirmation
+
+## create a context for params of search catalogue objects (used in 3 components)
+
+## add strict type safety (templates) instead of using type "any"
+
+
 
 **When updating inventory, you need four key pieces of information: the item's variation ID (to identify the specific product), the inventory state change, the location ID (to specify which store), and a timestamp (to track when the change happened).**
 

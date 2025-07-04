@@ -1,36 +1,46 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { css } from "../../../../styled-system/css";
+import { useDebounce } from "@/app/hooks/useDebounce";
 
 interface SearchBarProps {
   setParams: (params: Record<string, any>) => void;
-  prevParams?: Record<string, any>;
+  prevParams: Record<string, any>;
 }
 
+// Debounce hook
 
-// search bar not working if i use SSR on initial product fetch
-export default function SearchBar({
-  setParams,
-  prevParams = {},
-}: SearchBarProps) {
-  const [search, setSearch] = useState("");
+export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
+  const [searchInput, setSearchInput] = useState("");
+  // ? does debounced search depends on search input
+  const debouncedSearch = useDebounce(searchInput, 500);
 
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setParams({
-      ...prevParams,
-      query: {
-        text_query: {
-          keywords: [search],
+  useEffect(() => {
+    if (debouncedSearch.length >= 3) {
+      setParams({
+        ...prevParams,
+        query: {
+          ...prevParams.query,
+          text_query: {
+            keywords: [debouncedSearch],
+          },
         },
-      },
-    });
-  };
+      });
+    } else {
+      // If less than 3 chars, show initial product listing, remove search query
+      setParams({
+        types: "item, image, category",
+        query: {
+          ...prevParams.query,
+          text_query: undefined,
+        },
+      });
+    }
+  }, [debouncedSearch]);
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={(e) => e.preventDefault()}
       className={css({
         display: "flex",
         alignItems: "center",
@@ -43,8 +53,8 @@ export default function SearchBar({
     >
       <input
         type="text"
-        value={search}
-        onChange={(event) => setSearch(event.target.value)}
+        value={searchInput}
+        onChange={(event) => setSearchInput(event.target.value)}
         placeholder="Search products..."
         className={css({
           flex: 1,
@@ -57,36 +67,11 @@ export default function SearchBar({
           outline: "none",
           _focus: {
             borderColor: "gray.800",
-            boxShadow: "0 0 0 2px rgb(61, 63, 64)",
+            boxShadow: "0 0 0 1px rgb(61, 62, 62)",
           },
           transition: "border-color 0.2s, box-shadow 0.2s",
         })}
       />
-
-      <button
-        type="submit"
-        className={css({
-          px: "4",
-          py: "2",
-          bg: "gray.700",
-          color: "white",
-          borderRadius: "md",
-          fontWeight: "medium",
-          fontSize: "md",
-          cursor: "pointer",
-          _hover: {
-            bg: "gray.800",
-            // transform: "scale(1.03)",
-            boxShadow: "md",
-          },
-          _active: {
-            bg: "gray.800",
-          },
-          transition: "all 0.2s",
-        })}
-      >
-        Search
-      </button>
     </form>
   );
 }

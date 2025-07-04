@@ -23,7 +23,9 @@ export default function ProductCard({
 }: ProductCardProps) {
   const { cart, addToCart, removeFromCart, updateQuantity } =
     useContext(CartContext);
+  // * retrieves the cart item from the cart object using the id
   const cartItem = cart[id];
+
   // * inventory management
   const inventoryQty =
     typeof quantity === "string" ? parseInt(quantity, 10) : quantity ?? 0;

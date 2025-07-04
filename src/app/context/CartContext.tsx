@@ -43,7 +43,9 @@ export function CartContextProvider({
 
   // * memoizing these functions ensures that their references dont change on every render
   const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
+    // * prev is the previous state of the cart
     setCart((prev) => {
+      // * if the item already pressent in the cart (edge case: not being used in my app)
       if (prev[item.id]) {
         return {
           ...prev,
@@ -54,7 +56,7 @@ export function CartContextProvider({
         };
       }
       return {
-        ...prev,
+        ...prev, // * copies previous cart items
         [item.id]: { ...item, quantity: 1 },
       };
     });
@@ -70,8 +72,8 @@ export function CartContextProvider({
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
     setCart((prev) => {
-      if (!prev[id]) return prev;
-      if (quantity <= 0) {
+      if (!prev[id]) return prev; // * if item is not in cart already (edge case)
+      if (quantity <= 0) { // * edge case (not applicable in my app as of now)
         const newCart = { ...prev };
         delete newCart[id];
         return newCart;

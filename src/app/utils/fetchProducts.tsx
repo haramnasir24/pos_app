@@ -8,13 +8,35 @@ export async function fetchProducts(
   params?: Record<string, any>
 ) {
   if (params) {
+    const setQuery = params.query?.set_query; // * for filter by category
+    const textQuery = params.query?.text_query; // * for search by keyword
+
+    console.log(setQuery);
+    console.log(textQuery);
+
+    let query = undefined;
+
+    if (setQuery && textQuery) {
+      // * combine both queries
+      query = {
+        set_query: setQuery,
+        text_query: textQuery,
+      };
+    } else if (setQuery) {
+      query = { set_query: setQuery };
+    } else if (textQuery) {
+      query = { text_query: textQuery };
+    }
+
     const body = {
-      object_types: params.types.split(",").map((t: string) => t.trim().toUpperCase()),
-      query: params.query,
-      include_related_objects: false,
+      object_types: params.types
+        .split(",")
+        .map((t: string) => t.trim().toUpperCase()),
+      query: query, // TODO: combine both filter and search queries
+      include_related_objects: true,
     };
 
-    console.log("body:", body)
+    console.log("body:", body);
 
     const response = await fetch("/api/products/searchCatalog", {
       method: "POST",
