@@ -12,11 +12,12 @@ import Authenticated from "@/app/components/home/Authenticated";
 import AuthenticationProcessor from "@/app/components/home/AuthenticationProcessor";
 import ErrorComponent from "@/app/components/home/ErrorComponent";
 import Loader from "@/app/components/home/Loader";
-import SignInButton from "@/app/components/home/SignInButton";
-import SignInText from "@/app/components/home/SignInText";
+
 import handleOAuthCallback from "@/app/utils/auth/handleOAuthCallback";
 
 import { css } from "../../../../styled-system/css";
+import SignInText from "@/app/components/home/sign-in/SignInText";
+import SignInButton from "@/app/components/home/sign-in/SignInButton";
 
 export default function SignInPage() {
   const { data: session, status } = useSession(); // useSession returns a session object on client side

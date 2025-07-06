@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Missing or invalid variationIds array" }, { status: 400 });
     }
 
-    // Optionally allow locationIds to be passed, otherwise omit
+    // pptionally allow locationIds to be passed, otherwise omit
     const payload = {
       catalog_object_ids: variationIds,
       ...(locationIds ? { location_ids: locationIds } : {}),
