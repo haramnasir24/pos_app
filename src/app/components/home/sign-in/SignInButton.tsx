@@ -9,7 +9,7 @@ export default function SignInButton() {
       onClick={() => signIn("square", { callbackUrl: "/dashboard" })}
       className={css({
         width: "100%",
-        background: "linear-gradient(to right, #2563eb, #4f46e5)",
+        background: '{gradients.signIn}',
         color: "white",
         padding: "16px 24px",
         borderRadius: "12px",

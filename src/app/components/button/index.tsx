@@ -1,4 +1,3 @@
-import { signOut } from "next-auth/react";
 import { cva } from "~/styled-system/css/cva.mjs";
 
 const button = cva({

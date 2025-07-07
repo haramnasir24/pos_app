@@ -5,7 +5,10 @@ export default defineConfig({
   preflight: true,
 
   // Where to look for your css declarations
-  include: ["./src/components/**/*.{ts,tsx,js,jsx}", "./src/app/**/*.{ts,tsx,js,jsx}"],
+  include: [
+    "./src/components/**/*.{ts,tsx,js,jsx}",
+    "./src/app/**/*.{ts,tsx,js,jsx}",
+  ],
   // include: ["./src/**/*.{js,jsx,ts,tsx}", "./pages/**/*.{js,jsx,ts,tsx}"],
 
   // Files to exclude
@@ -13,8 +16,16 @@ export default defineConfig({
 
   // Useful for theme customization
   theme: {
-    extend: {},
+    tokens: {
+      gradients: {
+        signIn: {
+          value: "linear-gradient(to right,  #2563eb, #4f46e5)",
+        },
+      },
+    },
   },
+
+  jsxFramework: "react",
 
   // The output directory for your css system
   outdir: "styled-system",
