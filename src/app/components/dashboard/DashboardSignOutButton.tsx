@@ -3,35 +3,13 @@
 import { signOut } from "next-auth/react";
 
 import { css } from "../../../../styled-system/css";
+import { button } from "../button";
 
 export function DashboardSignOutButton() {
   return (
     <button
       onClick={() => signOut({ callbackUrl: "/" })}
-      className={css({
-        px: "4",
-        py: "2",
-        bg: "red.500",
-        color: "white",
-        rounded: "lg",
-        fontSize: "sm",
-        fontWeight: "medium",
-        transition: "all 0.2s",
-        cursor: "pointer",
-        _hover: {
-          bg: "red.600",
-          // transform: "translateY(-1px)",
-          shadow: "md",
-        },
-        // _active: {
-        //   transform: "translateY(0)",
-        // },
-        // _focus: {
-        //   outline: "2px solid",
-        //   outlineColor: "gray.500",
-        //   outlineOffset: "2px",
-        // },
-      })}
+      className={button({ style: 'dashboard'})}
     >
       Sign Out
     </button>

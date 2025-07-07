@@ -10,8 +10,6 @@ import { center, container, stack } from "../../../styled-system/patterns";
 export default async function DashboardPage() {
   // * check the session
   const session = await getServerSession(authOptions);
-  // console.log("session:", session);
-  // console.log(session?.accessToken);
 
   if (!session) {
     redirect("/");
@@ -98,6 +96,7 @@ export default async function DashboardPage() {
                     color: "gray.600",
                     maxW: "1xl",
                     mx: "auto",
+                
                   })}
                 >
                   Manage your Square integration, view products, and handle
