@@ -1,8 +1,13 @@
 # use server actions for post requests (throughout code)
 
-## implement hybrid (ssr for initial products listing on mount and client fetch using hooks for filter and search)
+**The homepage should display a list of products using Server-Side Rendering (SSR)
+Implement streaming UI for product added cart to improve perceived performance.**
 
-## add both queries of search and filter in api fetch
+## do I check inventory at checkout or during adding to cart
+
+TODO:
+
+## implement hybrid (ssr for initial products listing on mount and client fetch using hooks for filter and search)
 
 ## implement local storage to maintain the cart between re-renders
 
@@ -10,39 +15,15 @@
 
 ## wrap the product section in a suspense
 
-## do i check inventory at checkout or during adding to cart
-
 ## adjust inventory after checkout and order confirmation
 
 ## create a context for params of search catalogue objects (used in 3 components)
 
 ## add strict type safety (templates) instead of using type "any"
 
-
-
 **When updating inventory, you need four key pieces of information: the item's variation ID (to identify the specific product), the inventory state change, the location ID (to specify which store), and a timestamp (to track when the change happened).**
 
-
-
 ## is react query caching my data, how
-
-check if search catalog products api can be used for search and filter aswell
-look into checkout management
-inventory management api
-
-Phase 2: Product Listing and Cart
-Tasks:
-The homepage should display a list of products using Server-Side Rendering (SSR).
-Implement streaming UI for product added cart to improve perceived performance.
-Use Tanstack react query for data fetching and caching.
-
-Expectations:
-Homepage renders server-side for optimal performance.
-Product search and filtering are fast and accurate.
-Shopping cart uses streaming UI for improved perceived performance.
-All operations are secure and respect the user's authentication status.
-Implement well-defined component patterns (container/layout/UI) and use composition to build a modular and maintainable codebase.
-No global state management library is used; rely on React's built-in state management and context API if necessary.
 
 **Step 6: Product Data Fetching**
 Implement server-side rendering for initial product load
@@ -58,17 +39,8 @@ Create cart context using React Context API
 Implement streaming UI for cart updates
 Create side drawer component with smooth animations
 
-Step 9: Product Cards with Quantity Controls
-Design responsive product cards
-Implement quantity controls that replace "Add to Cart" button
-Add loading states and error handling
-
 Step 10: Optimize Performance
 Implement proper loading states
 Add skeleton screens for better perceived performance
 Optimize images and implement lazy loading
-
-Use Next.js server actions to integrate directly with Square POS APIs.
-Implement functions for product retrieval, discount and tax options, and order processing.
-Ensure Square API calls are made securely using authenticated sessions.
 

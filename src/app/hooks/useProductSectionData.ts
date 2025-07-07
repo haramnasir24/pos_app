@@ -11,11 +11,12 @@ export function useProductSectionData({
   products?: any;
   inventory?: any;
 }) {
-
   // * On mount, initialize state with SSR data
 
   // * params for fetching products
-  const [params, setParams] = useState({ types: "item, image, category" });
+  const [params, setParams] = useState({
+    types: "item, image, category, tax, discount",
+  });
 
   // * custom hook for fetching products
   const { data, isPending, error } = useProductList(accessToken, params);
@@ -23,17 +24,56 @@ export function useProductSectionData({
   // * use server-side products if provided, otherwise use client-fetched data
   const productData = products || data;
 
-  // TODO: change this into a hook that runs only when the categories change
-  // // * get the categories for use in filter functionality
-  // const categories =
-  //   productData?.objects?.filter((obj: any) => obj.type === "CATEGORY") || [];
+  console.log("Product data:", productData);
 
-  // // * create an array of objects containing category names (values) and ids (keys)
-  // // * save this to a json file
-  // const categoryObjects = categories.map((category: any) => ({
-  //   id: category.id,
-  //   name: category.category_data?.name,
-  // }));
+  // * retrieve the taxes and discounts
+  const taxes =
+    productData?.objects?.filter((obj: any) => obj.type === "TAX") || [];
+  const discounts =
+    productData?.objects?.filter((obj: any) => obj.type === "DISCOUNT") || [];
+
+  const taxes_data = taxes.map((tax: any) => ({
+    id: tax.id,
+    name: tax.tax_data.name,
+    percentage: parseFloat(tax.tax_data.percentage),
+    enabled: tax.tax_data.enabled,
+  }));
+
+  const discounts_data = discounts.map((discount: any) => {
+    const { id, discount_data } = discount;
+    const base = {
+      id,
+      name: discount_data.name,
+      type: discount_data.discount_type,
+      modify_tax_basis: "MODIFY_TAX_BASIS",
+    };
+  
+    if (discount_data.percentage !== undefined) {
+      return {
+        ...base,
+        percentage: parseFloat(discount_data.percentage),
+      };
+    } else if (discount_data.amount_money?.amount !== undefined) {
+      return {
+        ...base,
+        amount: discount_data.amount_money.amount,
+      };
+    } else {
+      return base;
+    }
+  });
+
+  // TODO: change this into a hook that runs only when the categories change
+  // * get the categories for use in filter functionality
+  const categories =
+    productData?.objects?.filter((obj: any) => obj.type === "CATEGORY") || [];
+
+  // * create an array of objects containing category names (values) and ids (keys)
+  // * save this to a json file
+  const categoryObjects = categories.map((category: any) => ({
+    id: category.id,
+    name: category.category_data?.name,
+  }));
 
   // * get the items
   const items =
@@ -102,7 +142,9 @@ export function useProductSectionData({
     isPending,
     error,
     items,
-    // categoryObjects,
+    taxes_data,
+    discounts_data,
+    categoryObjects,
     cartInventoryInfo,
     inventoryMap,
     imageMap,

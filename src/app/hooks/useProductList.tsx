@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import { fetchProducts } from "@/app/utils/fetchProducts";
 
-export function useProductList(access_token: string, params?: Record<string, string>) {
+export function useProductList(access_token: string, params?: Record<string, any>) {
   // * useQuery is used for get requests
   return useQuery({
     queryKey: ["products", params],

@@ -29,7 +29,7 @@ export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
     } else {
       // If less than 3 chars, show initial product listing, remove search query
       setParams({
-        types: "item, image, category",
+        types: "item, image, category, tax, discount",
         query: {
           ...prevParams.query,
           text_query: undefined,

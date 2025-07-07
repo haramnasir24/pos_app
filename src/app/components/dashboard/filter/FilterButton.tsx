@@ -32,7 +32,7 @@ export default function FilterButton({
       });
     } else {
       setParams({
-        types: "item, image, category",
+        types: "item, image, category, tax, discount",
         query: {
           ...prevParams.query,
           set_query: undefined,

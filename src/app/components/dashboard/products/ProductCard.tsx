@@ -11,6 +11,11 @@ interface ProductCardProps {
   imageUrl: string;
   state?: string;
   quantity?: string | number;
+  is_taxable?: boolean | undefined;
+  itemTaxRate?: number;
+  itemDiscount?: number;
+  category?: string;
+  variantId?: string;
 }
 
 export default function ProductCard({
@@ -20,6 +25,11 @@ export default function ProductCard({
   imageUrl,
   state,
   quantity,
+  is_taxable,
+  itemTaxRate,
+  itemDiscount,
+  category,
+  variantId,
 }: ProductCardProps) {
   const { cart, addToCart, removeFromCart, updateQuantity } =
     useContext(CartContext);
@@ -172,7 +182,9 @@ export default function ProductCard({
               _hover: isOutOfStock ? undefined : { bg: "gray.700" },
               cursor: isOutOfStock ? "not-allowed" : undefined,
             })}
-            onClick={() => addToCart({ id, name, price, imageUrl })}
+            onClick={() =>
+              addToCart({ id, name, price, imageUrl, is_taxable, itemTaxRate, category, variantId })
+            }
             disabled={isOutOfStock}
           >
             {isOutOfStock ? "Out of Stock" : "Add to Cart"}

@@ -66,7 +66,10 @@ export async function POST(req: NextRequest) {
   }
 
   // read square_image_ids.json to add image_ids to items
-  const imageIdsPath = path.join(process.cwd(), "src/app/constant/square_image_ids.json");
+  const imageIdsPath = path.join(
+    process.cwd(),
+    "src/app/constant/square_image_ids.json"
+  );
   let imageIdMap: Record<string, string> = {};
   try {
     const imageIdFile = await fs.readFile(imageIdsPath, "utf-8");
@@ -76,16 +79,18 @@ export async function POST(req: NextRequest) {
   }
 
   // Collect unique categories
-  const uniqueCategories = Array.from(new Set(products.map((p: any) => p.category)));
+  const uniqueCategories = Array.from(
+    new Set(products.map((p: any) => p.category))
+  );
 
   // Create category catalog objects
-  const categoryObjects = uniqueCategories.map(category => ({
+  const categoryObjects = uniqueCategories.map((category) => ({
     type: "CATEGORY",
     id: `#${category}`,
     present_at_all_locations: true,
     category_data: {
-      name: category
-    }
+      name: category,
+    },
   }));
 
   // Add both category objects and product objects to the batch
@@ -94,10 +99,12 @@ export async function POST(req: NextRequest) {
     ...products.map((product: any) => {
       // Try to find a matching image ID by SKU
       // The imageIdMap keys are filenames like SKU_0.jpg
-      const imageKey = Object.keys(imageIdMap).find(key => key.startsWith(product.sku));
+      const imageKey = Object.keys(imageIdMap).find((key) =>
+        key.startsWith(product.sku)
+      );
       const imageId = imageKey ? imageIdMap[imageKey] : undefined;
       return mapProductToCatalogObject(product, imageId);
-    })
+    }),
   ];
 
   // Square allows up to 1000 objects per batch
