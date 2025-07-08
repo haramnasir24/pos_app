@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+"use client";
+
+import { useState } from "react";
 import { css } from "~/styled-system/css";
 
 type CategoryObj = { id: string; name: string };

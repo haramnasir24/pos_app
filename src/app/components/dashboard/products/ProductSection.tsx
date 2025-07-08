@@ -34,7 +34,7 @@ export default function ProductSection({
   } = useProductSectionData({ accessToken, products, inventory });
 
   // *  it is an array of objects with id and name
-  console.log(categoryObjects);
+  // console.log(categoryObjects);
 
   return (
     <div className={css({ w: "full", mt: "8" })}>

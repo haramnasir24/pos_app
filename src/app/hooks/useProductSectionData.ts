@@ -14,7 +14,10 @@ export function useProductSectionData({
   // * On mount, initialize state with SSR data
 
   // * params for fetching products
-  const [params, setParams] = useState({
+  const [params, setParams] = useState<{
+    types: string;
+    query?: string;
+  }>({
     types: "item, image, category, tax, discount",
   });
 
@@ -22,9 +25,19 @@ export function useProductSectionData({
   const { data, isPending, error } = useProductList(accessToken, params);
 
   // * use server-side products if provided, otherwise use client-fetched data
-  const productData = products || data;
 
-  console.log("Product data:", productData);
+  const productData = useMemo(() => {
+    // * if search/filter then use client data
+    if (params.query) {
+      return data;
+    }
+    return products;
+  }, [data, products]);
+  // console.log("Product data:", productData);
+
+  const isClientSideFetching = useMemo(() => {
+    return params.query && isPending;
+  }, [params.query, isPending]);
 
   // * retrieve the taxes and discounts
   const taxes =
@@ -47,7 +60,7 @@ export function useProductSectionData({
       type: discount_data.discount_type,
       modify_tax_basis: "MODIFY_TAX_BASIS",
     };
-  
+
     if (discount_data.percentage !== undefined) {
       return {
         ...base,
@@ -139,7 +152,7 @@ export function useProductSectionData({
   return {
     params,
     setParams,
-    isPending,
+    isPending: isClientSideFetching,
     error,
     items,
     taxes_data,

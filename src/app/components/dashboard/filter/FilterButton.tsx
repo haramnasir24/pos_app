@@ -1,3 +1,5 @@
+"use client";
+
 import { FaFilter } from "react-icons/fa";
 import FilterDrawer from "./FilterDrawer";
 import { useState } from "react";

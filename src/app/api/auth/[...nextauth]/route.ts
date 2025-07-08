@@ -19,7 +19,7 @@ export const authOptions: NextAuthOptions = {
           response_type: "code",
         },
       },
-      // token exchange after receiving authorization code at the redirect callback uri
+      // * token exchange after receiving authorization code at the redirect callback uri
       token: {
         url: `${process.env.SQUARE_API_BASE}/oauth2/token`,
         async request({ params }) {
@@ -46,8 +46,7 @@ export const authOptions: NextAuthOptions = {
           }
 
           const tokens = await response.json();
-          console.log("Successfully received tokens:", tokens);
-
+          // console.log("Successfully received tokens:", tokens);
           return { tokens };
         },
       },
@@ -65,8 +64,8 @@ export const authOptions: NextAuthOptions = {
             }
           );
           const data = await res.json();
-          console.log(data.merchant);
-          return data; // check this data
+          // console.log(data.merchant);
+          return data; 
         },
       },
       profile(profile) {
@@ -80,7 +79,7 @@ export const authOptions: NextAuthOptions = {
     },
   ],
   callbacks: {
-    // jwt is used to persist custom properties in the token
+    // * jwt is used to persist custom properties in the token
     async jwt({ token, account, profile }) {
       if (account && profile) {
         token.sub =
@@ -92,8 +91,8 @@ export const authOptions: NextAuthOptions = {
         token.email = (profile as { email?: string }).email || null;
         token.accessToken = account?.access_token;
       }
-      // On subsequent requests, just return the token as is
-      console.log(token);
+      // * On subsequent requests, just return the token as is
+      // console.log(token);
       return token;
     },
 
@@ -102,17 +101,17 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.sub;
       }
       session.accessToken = token.accessToken as string;
-      console.log("session:", session);
-      console.log("session:", session.accessToken);
+      // console.log("session:", session);
+      // console.log("session:", session.accessToken);
       return session;
     },
     async signIn({ account }) {
-      console.log("Access Token:", account?.access_token);
+      // console.log("Access Token:", account?.access_token);
       return true;
     },
   },
   // secret: process.env.NEXTAUTH_SECRET,
-  debug: true,
+  debug: false,
 };
 
 const handler = NextAuth(authOptions);

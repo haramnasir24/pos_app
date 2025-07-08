@@ -1,11 +1,13 @@
 import { redirect } from "next/navigation";
-import { getServerSession } from "next-auth";
+import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ProductSection from "../components/dashboard/products/ProductSection";
 import { css } from "../../../styled-system/css";
 import { center, container, stack } from "../../../styled-system/patterns";
+import { Suspense } from "react";
+import ProductSectionSkeleton from "../components/dashboard/products/ProductSectionSkeleton";
 
 export default async function DashboardPage() {
   // * check the session
@@ -19,59 +21,59 @@ export default async function DashboardPage() {
 
   // * fetching products server side
   let products = null;
-  // try {
-  //   const response = await fetch(
-  //     "https://connect.squareupsandbox.com/v2/catalog/search",
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${session.accessToken}`,
-  //         "Square-Version": "2025-06-18",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         object_types: ["ITEM", "IMAGE", "CATEGORY"],
-  //         include_related_objects: true,
-  //       }),
-  //     }
-  //   );
-  //   if (response.ok) {
-  //     products = await response.json();
-  //   }
-  // } catch (e) {
-  //   // fail silently, fallback to client fetch
-  // }
+  try {
+    const response = await fetch(
+      "https://connect.squareupsandbox.com/v2/catalog/search",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          "Square-Version": "2025-06-18",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          object_types: ["ITEM", "IMAGE", "CATEGORY", "TAX", "DISCOUNT"],
+          include_related_objects: true,
+        }),
+      }
+    );
+    if (response.ok) {
+      products = await response.json();
+    }
+  } catch (e) {
+    // fail silently, fallback to client fetch
+  }
 
-  // const items =
-  //   products.objects?.filter((obj: any) => obj.type === "ITEM") || [];
+  const items =
+    products.objects?.filter((obj: any) => obj.type === "ITEM") || [];
 
-  // const variationIds = items?.flatMap(
-  //   (item: any) => item.item_data?.variations?.map((v: any) => v.id) ?? []
-  // );
+  const variationIds = items?.flatMap(
+    (item: any) => item.item_data?.variations?.map((v: any) => v.id) ?? []
+  );
 
   // * fetching inventory server side
   let inventoryData = null;
-  // try {
-  //   const response = await fetch(
-  //     "https://connect.squareupsandbox.com/v2/inventory/counts/batch-retrieve",
-  //     {
-  //       method: "POST",
-  //       headers: {
-  //         Authorization: `Bearer ${session.accessToken}`,
-  //         "Square-Version": "2025-06-18",
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         catalog_object_ids: variationIds,
-  //       }),
-  //     }
-  //   );
-  //   if (response.ok) {
-  //     inventoryData = await response.json();
-  //   }
-  // } catch (e) {
-  //   // fail silently, fallback to client fetch
-  // }
+  try {
+    const response = await fetch(
+      "https://connect.squareupsandbox.com/v2/inventory/counts/batch-retrieve",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${session.accessToken}`,
+          "Square-Version": "2025-06-18",
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          catalog_object_ids: variationIds,
+        }),
+      }
+    );
+    if (response.ok) {
+      inventoryData = await response.json();
+    }
+  } catch (e) {
+    // fail silently, fallback to client fetch
+  }
 
   return (
     <div className={css({ minH: "100vh", bg: "gray.50" })}>
@@ -106,11 +108,13 @@ export default async function DashboardPage() {
               </div>
 
               {/* Product Section */}
-              <ProductSection
-                accessToken={session.accessToken ?? ""}
-                products={products}
-                inventory={inventoryData}
-              />
+              <Suspense fallback={<ProductSectionSkeleton />}>
+                <ProductSection
+                  accessToken={session.accessToken ?? ""}
+                  products={products}
+                  inventory={inventoryData}
+                />
+              </Suspense>
             </div>
           </div>
         </div>
