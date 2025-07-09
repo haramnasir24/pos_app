@@ -1,3 +1,5 @@
+"use client";
+
 import { useQuery } from "@tanstack/react-query";
 import { fetchInventory } from "../utils/fetchInventory";
 
@@ -6,6 +8,6 @@ export function useInventoryData(variationIds: string[], accessToken: string) {
   return useQuery({
     queryKey: ["inventory", variationIds],
     queryFn: () => fetchInventory(accessToken, variationIds),
-    enabled: !!accessToken,
+    enabled: !!accessToken && variationIds.length > 0,
   });
 }

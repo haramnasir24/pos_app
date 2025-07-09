@@ -1,81 +1,101 @@
 "use client";
 
 import { MdOutlineAddShoppingCart } from "react-icons/md";
-import { useContext, useState, useEffect } from "react";
-import { CartContext, Discount, TaxRate } from "../../context/CartContext";
-import { css, cx } from "../../../../styled-system/css";
+import { useContext, useState } from "react";
+import { CartContext, TaxRate } from "../../../context/CartContext";
+import { css, cx } from "../../../../../styled-system/css";
 import Image from "next/image";
-import {
-  handleCheckoutUtil,
-  handleItemTaxToggleUtil,
-} from "../../utils/cartDrawerUtils";
-import { OrderConfirmation } from "./OrderConfirmation";
+import { OrderConfirmation } from "../order/OrderConfirmation";
+
 
 type CartDrawerProps = {
-  accessToken: string;
+  accessToken?: string;
   cartInventoryInfo: Record<string, { state: string; quantity: string }>;
   taxes_data: TaxRate[];
-  discounts: Discount[];
+  itemVariationIds: string[];
+};
+
+type SelectedTax = {
+  itemTaxRate?: number;
+  enabled?: boolean;
 };
 
 export default function CartDrawer({
+  accessToken,
   cartInventoryInfo,
-  taxes_data,
-  discounts,
 }: CartDrawerProps) {
   const {
     cart,
     updateQuantity,
     removeFromCart,
     toggleItemTax,
-    setItemTaxRate,
     getOrderSummary,
     clearCart,
+    applyItemDiscount,
+    removeItemDiscount,
+    setItemTaxRate,
   } = useContext(CartContext);
 
   const [open, setOpen] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
-  const [availableDiscounts, setAvailableDiscounts] =
-    useState<Discount[]>(discounts);
-  const [availableTaxRates, setAvailableTaxRates] =
-    useState<TaxRate[]>(taxes_data);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const [orderSuccess, setOrderSuccess] = useState(false);
-  const [orderError, setOrderError] = useState<string | null>(null);
 
-  // * returns an array of all items in cart at the moment
-  const items = Object.values(cart);
+  // * store selected discount per item
+  const [selectedDiscounts, setSelectedDiscounts] = useState<
+    Record<string, any>
+  >({});
+
+  // * store selected taxes per item
+  const [selectedTaxes, setSelectedTaxes] = useState<
+    Record<string, SelectedTax>
+  >({});
+
+  const [showAddedMessage, setShowAddedMessage] = useState(false);
+
+  const items = Object.values(cart); // * returns an array of all items in cart at the moment
   const orderSummary = getOrderSummary();
 
-  const subtotal = orderSummary.subtotal;
+  // * utility functions for cart
 
-  console.log(discounts);
+  // * handle discount toggle
+  const handleDiscountToggle = (item: any, checked: boolean) => {
+    if (checked && selectedDiscounts[item.id]) {
+      applyItemDiscount(item.id, selectedDiscounts[item.id]);
+    } else {
+      removeItemDiscount(item.id);
+    }
+  };
 
-  // * utility functions
-  // const handleCheckout = () =>
-  //   handleCheckoutUtil({
-  //     items,
-  //     orderSummary,
-  //     clearCart,
-  //     setOrderSuccess,
-  //     setShowCheckout,
-  //     setOrderError,
-  //     setOpen,
-  //     setIsProcessing,
-  //   });
+  // * handle discount select
+  const handleDiscountSelect = (item: any, discount: any) => {
+    setSelectedDiscounts((prev) => ({
+      ...prev,
+      [item.id]: discount,
+    }));
+    // If already checked, apply immediately
+    if (discount && item.itemDiscount) {
+      applyItemDiscount(item.id, discount);
+    }
+  };
 
-  // * toggles the tax for each item
-  const handleItemTaxToggle = (itemId: string, is_taxable: boolean) =>
-    handleItemTaxToggleUtil({
-      itemId,
-      is_taxable,
-      toggleItemTax,
-    });
+  // * handle tax toggle
+  const handleTaxToggle = (item: any, checked: boolean) => {
+    toggleItemTax(item.id, checked);
+  };
 
-  // * show order confirmation
-  if (orderSuccess) {
-    <OrderConfirmation />;
-  }
+  // * handle tax select
+  const handleTaxSelect = (item: any, value: string) => {
+    const taxRate = value === "" ? undefined : parseFloat(value);
+    setSelectedTaxes((prev) => ({
+      ...prev,
+      [item.id]: {
+        ...prev[item.id],
+        itemTaxRate: taxRate,
+      },
+    }));
+    if (typeof taxRate === "number") {
+      setItemTaxRate(item.id, taxRate);
+    }
+  };
 
   return (
     <>
@@ -128,7 +148,6 @@ export default function CartDrawer({
           onClick={() => {
             setOpen(false);
             setShowCheckout(false);
-            setOrderError(null);
           }}
         >
           &times;
@@ -149,6 +168,9 @@ export default function CartDrawer({
                   const inventory = cartInventoryInfo[item.id];
                   const state = inventory?.state ?? "Unknown";
                   const quantity = inventory?.quantity ?? "-";
+                  // * get the disconts and taxes for each item
+                  const discounts = item.discounts || [];
+                  const taxes = item.taxes || [];
 
                   //* inventory management
                   const inventoryQty =
@@ -158,7 +180,15 @@ export default function CartDrawer({
                   const atMaxQty = item.quantity >= inventoryQty;
 
                   return (
-                    <div>
+                    <div
+                      className={css({
+                        py: "2",
+                        px: "3",
+                        bg: "gray.50",
+                        borderRadius: "md",
+                        mb: "4",
+                      })}
+                    >
                       <div
                         key={item.id}
                         className={css({
@@ -247,122 +277,127 @@ export default function CartDrawer({
                       </div>
 
                       {/* Item-level tax toggle */}
-                      <div
-                        className={css({
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "2",
-                          mb: "4",
-                          mt: "4",
-                        })}
-                      >
-                        <label
+                      {taxes.length > 0 && (
+                        <div
                           className={css({
-                            fontSize: "sm",
                             display: "flex",
                             alignItems: "center",
-                            gap: "1",
+                            gap: "2",
+                            mb: "4",
+                            mt: "4",
                           })}
                         >
-                          <input
-                            type="checkbox"
-                            checked={item.is_taxable ?? false}
+                          <label
+                            className={css({
+                              fontSize: "xs",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "1",
+                            })}
+                          >
+                            <input
+                              className={css({ mr: "1" })}
+                              type="checkbox"
+                              checked={
+                                !!item.is_taxable &&
+                                item.itemTaxRate !== undefined
+                              }
+                              disabled={!selectedTaxes[item.id]}
+                              onChange={(e) =>
+                                handleTaxToggle(item, e.target.checked)
+                              }
+                            />
+                            Apply Tax
+                          </label>
+                          <select
+                            value={item.itemTaxRate ?? ""}
                             onChange={(e) =>
-                              handleItemTaxToggle(item.id, e.target.checked)
+                              handleTaxSelect(item, e.target.value)
                             }
-                            className={css({ mr: "1" })}
-                          />
-                          Apply Tax
-                        </label>
-
-                        <select
-                          value={item.itemTaxRate || ""}
-                          onChange={(e) => {
-                            const value = e.target.value;
-                            if (value === "") {
-                              return;
-                            }
-                            setItemTaxRate(item.id, parseFloat(value));
-                          }}
-                          className={css({
-                            fontSize: "xs",
-                            px: "2",
-                            py: "1",
-                            border: "1px solid",
-                            borderColor: "gray.300",
-                            borderRadius: "md",
-                          })}
-                        >
-                          {taxes_data.map((tax: TaxRate) => (
-                            <option key={tax.id} value={tax.percentage}>
-                              {tax.name} ({tax.percentage}%)
-                            </option>
-                          ))}
-                        </select>
-                      </div>
+                            className={css({
+                              fontSize: "xs",
+                              px: "2",
+                              py: "1",
+                              border: "1px solid",
+                              borderColor: "gray.300",
+                              borderRadius: "md",
+                            })}
+                          >
+                            <option value="">Select Tax</option>
+                            {taxes.map((tax, idx) => (
+                              <option
+                                key={idx}
+                                value={
+                                  tax.percentage !== null
+                                    ? Number(tax.percentage)
+                                    : ""
+                                }
+                              >
+                                {tax.name} ({tax.percentage}%)
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
 
                       {/* Item level discount display */}
-
-                      <div
-                        className={css({
-                          display: "flex",
-                          alignItems: "center",
-                          mt: "4",
-                          gap: "2",
-                          mb: "2",
-                        })}
-                      >
-                        <label
+                      {discounts.length > 0 && (
+                        <div
                           className={css({
-                            fontSize: "sm",
                             display: "flex",
                             alignItems: "center",
-                            gap: "1",
+                            gap: "2",
+                            mb: "4",
                           })}
                         >
-                          <input className={css({ mr: "1" })} type="checkbox" />
-                          Discounts
-                        </label>
-                        {item.category === "furniture" &&
-                          (() => {
-                            const furnitureDiscounts = discounts.filter(
-                              (discount: Discount) =>
-                                discount.name === "20% Off Furniture"
-                            );
-                            return (
-                              <select
-                                value={item.itemDiscountId || ""}
-                                onChange={(e) => {
-                                  const value = e.target.value;
-                                  if (value === "") {
-                                    return;
-                                  }
-                                  // handle selection
-                                }}
-                                className={css({
-                                  fontSize: "xs",
-                                  px: "2",
-                                  py: "1",
-                                  border: "1px solid",
-                                  borderColor: "gray.300",
-                                  borderRadius: "md",
-                                })}
-                              >
-                                <option value="">Select Discount</option>
-                                {furnitureDiscounts.map(
-                                  (discount: Discount) => (
-                                    <option
-                                      key={discount.id}
-                                      value={discount.id}
-                                    >
-                                      {discount.name}
-                                    </option>
-                                  )
-                                )}
-                              </select>
-                            );
-                          })()}
-                      </div>
+                          <label
+                            className={css({
+                              fontSize: "xs",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "1",
+                            })}
+                          >
+                            <input
+                              className={css({ mr: "1" })}
+                              type="checkbox"
+                              checked={!!item.itemDiscount}
+                              disabled={!selectedDiscounts[item.id]}
+                              onChange={(e) =>
+                                handleDiscountToggle(item, e.target.checked)
+                              }
+                            />
+                            Apply Discount
+                          </label>
+                          <select
+                            value={
+                              selectedDiscounts[item.id]?.discount_name || ""
+                            }
+                            onChange={(e) => {
+                              const discount = discounts.find(
+                                (d) => d.discount_name === e.target.value
+                              );
+                              handleDiscountSelect(item, discount);
+                            }}
+                            className={css({
+                              fontSize: "xs",
+                              px: "2",
+                              py: "1",
+                              border: "1px solid",
+                              borderColor: "gray.300",
+                              borderRadius: "md",
+                            })}
+                          >
+                            <option value="">Select Discount</option>
+                            {discounts.map((discount, idx) => (
+                              <option key={idx} value={discount.discount_name}>
+                                {discount.discount_name} (
+                                {discount.discount_value})
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -401,8 +436,17 @@ export default function CartDrawer({
             </div>
           </>
         ) : (
-          // this is temporaray, add checkout view here
-          <OrderConfirmation />
+          // TODO: take to the page where order is placed and all the orders api response is shown
+          // this is temporary, add order summary here
+          <OrderConfirmation
+            items={items}
+            accessToken={accessToken || ""}
+            onClose={() => {
+              setShowCheckout(false);
+              setOpen(false);
+              clearCart();
+            }}
+          />
         )}
       </div>
 

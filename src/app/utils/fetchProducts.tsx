@@ -7,6 +7,10 @@ export async function fetchProducts(
   accessToken: string,
   params?: Record<string, any>
 ) {
+  if (!accessToken) {
+    return null;
+  }
+
   if (params) {
     const setQuery = params.query?.set_query; // * for filter by category
     const textQuery = params.query?.text_query; // * for search by keyword

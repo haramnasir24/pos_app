@@ -20,6 +20,7 @@ export default function FilterButton({
 }: FilterButtonProps) {
   const [open, setOpen] = useState(false);
 
+  // * function that applies the filter
   const onApply = (selected: CategoryObj[]) => {
     if (selected && selected.length > 0) {
       setParams({
@@ -34,7 +35,7 @@ export default function FilterButton({
       });
     } else {
       setParams({
-        types: "item, image, category, tax, discount",
+        types: "item, image, category, tax, discount, pricing_rule, product_set",
         query: {
           ...prevParams.query,
           set_query: undefined,

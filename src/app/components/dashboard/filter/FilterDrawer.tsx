@@ -2,8 +2,12 @@
 
 import { useState } from "react";
 import { css } from "~/styled-system/css";
-
-type CategoryObj = { id: string; name: string };
+import { 
+  CategoryObj, 
+  toggleCategory, 
+  isCategorySelected, 
+  clearSelectedCategories 
+} from "@/app/utils/filter/filterUtils";
 
 interface FilterDrawerProps {
   open: boolean;
@@ -20,18 +24,12 @@ export default function FilterDrawer({
 }: FilterDrawerProps) {
   const [selected, setSelected] = useState<CategoryObj[]>([]);
 
-  // * reset selected when drawer opens
-  // useEffect(() => {
-  //   if (open) setSelected([]);
-  // }, [open]);
+
+  // * util functions for filter
 
   // * adds or removes a category object from the selected list
   const handleToggle = (category: CategoryObj) => {
-    setSelected((prev) =>
-      prev.some((c) => c.id === category.id)
-        ? prev.filter((c) => c.id !== category.id)
-        : [...prev, category]
-    );
+    setSelected((prev) => toggleCategory(category, prev));
   };
 
   // * passes the selected category objects and then closes the drawer
@@ -40,8 +38,9 @@ export default function FilterDrawer({
     onClose();
   };
 
+  // * clears the filter
   const handleClear = () => {
-    setSelected([]);
+    setSelected(clearSelectedCategories());
     onApply([]); // * call the API with no filter query
     onClose();
   };
@@ -112,7 +111,7 @@ export default function FilterDrawer({
               >
                 <input
                   type="checkbox"
-                  checked={selected.some((c) => c.id === category.id)}
+                  checked={isCategorySelected(category, selected)}
                   onChange={() => handleToggle(category)}
                   className={css({ mr: 2, cursor: "pointer" })}
                 />

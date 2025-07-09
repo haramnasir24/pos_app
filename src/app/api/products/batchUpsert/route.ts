@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
 
-// Helper to map a product to Square CatalogObject format, accepts imageId
+// * helper to map a product to Square CatalogObject format, accepts imageId
 function mapProductToCatalogObject(product: any, imageId?: string) {
   return {
     type: "ITEM",
@@ -25,14 +25,14 @@ function mapProductToCatalogObject(product: any, imageId?: string) {
           id: `#${product.sku}_variation`,
           present_at_all_locations: true,
           item_variation_data: {
-            item_id: `#${product.sku}`, // same as id of actual item
+            item_id: `#${product.sku}`,
             name: product.title,
             sellable: true,
             stockable: true,
             track_inventory: true,
             pricing_type: "FIXED_PRICING",
             price_money: {
-              amount: Math.round(product.price * 100), // Square expects cents
+              amount: Math.round(product.price * 100),
               currency: "USD",
             },
           },
@@ -51,7 +51,6 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // read data.json
   const filePath = path.join(process.cwd(), "src/app/constant/data.json");
   let products: any[];
   try {
@@ -78,12 +77,12 @@ export async function POST(req: NextRequest) {
     imageIdMap = {};
   }
 
-  // Collect unique categories
+  // collect unique categories
   const uniqueCategories = Array.from(
     new Set(products.map((p: any) => p.category))
   );
 
-  // Create category catalog objects
+  // create category catalog objects
   const categoryObjects = uniqueCategories.map((category) => ({
     type: "CATEGORY",
     id: `#${category}`,
@@ -98,7 +97,6 @@ export async function POST(req: NextRequest) {
     ...categoryObjects,
     ...products.map((product: any) => {
       // Try to find a matching image ID by SKU
-      // The imageIdMap keys are filenames like SKU_0.jpg
       const imageKey = Object.keys(imageIdMap).find((key) =>
         key.startsWith(product.sku)
       );
@@ -107,7 +105,6 @@ export async function POST(req: NextRequest) {
     }),
   ];
 
-  // Square allows up to 1000 objects per batch
   const batch = { objects };
   console.log(batch);
 

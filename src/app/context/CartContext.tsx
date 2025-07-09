@@ -8,34 +8,30 @@ export type CartItem = {
   imageUrl: string;
   quantity: number;
   is_taxable: boolean | undefined;
-  itemTaxRate?: number;
+  itemTaxRate?: number; // * selected tax rate (percentage)
   category?: string;
-  itemDiscount?: number;
+  itemDiscount?: Discount; // * applied discount object
   variantId?: string;
-  itemDiscountId?: string;
+  discounts?: Array<{
+    discount_name: string;
+    discount_value: string | number | null;
+  }>;
+  taxes?: Array<{ name: string; percentage: string | number | null }>;
 };
 
 // ? check this
 export type Discount = {
-  id: string;
-  name: string;
-  percentage?: number;
-  amount?: number;
-  modify_tax_basis: "MODIFY_TAX_BASIS";
-  type: "FIXED_PERCENTAGE" | "FIXED_AMOUNT";
-  description?: string;
-  minimumOrderAmount?: number;
+  discount_name: string;
+  discount_value: string | number | null;
 };
 
 export type TaxRate = {
-  id: string;
   name: string;
   percentage: number;
-  enabled: boolean;
 };
 
 export type OrderSummary = {
-  subtotal: number; // total before discounts and taxes
+  subtotal: number; // * sub-total before discounts and taxes
   discountAmount: number;
   taxAmount: number;
   total: number;
@@ -55,21 +51,18 @@ export type Cart = {
 // * using typescript utiliy type Omit
 interface CartContextType {
   cart: Cart;
+  // * cart methods
   addToCart: (item: Omit<CartItem, "quantity">) => void;
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
-  // discount and tax methods
+  // * discount and tax methods
   applyItemDiscount: (itemId: string, discount: Discount) => void;
   removeItemDiscount: (itemId: string) => void;
-  applyOrderDiscount: (discount: Discount) => void;
-  removeOrderDiscount: (discountId: string) => void;
   toggleItemTax: (itemId: string, enabled: boolean) => void;
   setItemTaxRate: (itemId: string, taxRate: number) => void;
-  setOrderTaxRate: (taxRate: TaxRate) => void;
-  removeOrderTaxRate: (taxRateId: string) => void;
-  // Order summary
+  // * Order summary
   getOrderSummary: () => OrderSummary;
-  // Clear cart
+  // * Clear cart
   clearCart: () => void;
 }
 
@@ -81,12 +74,8 @@ export const CartContext = createContext<CartContextType>({
   updateQuantity: () => {},
   applyItemDiscount: () => {},
   removeItemDiscount: () => {},
-  applyOrderDiscount: () => {},
-  removeOrderDiscount: () => {},
   toggleItemTax: () => {},
   setItemTaxRate: () => {},
-  setOrderTaxRate: () => {},
-  removeOrderTaxRate: () => {},
   getOrderSummary: () => ({
     subtotal: 0,
     discountAmount: 0,
@@ -104,14 +93,10 @@ export function CartContextProvider({
   children: React.ReactNode;
 }) {
   const [cart, setCart] = useState<Cart>({});
-  const [orderDiscounts, setOrderDiscounts] = useState<Discount[]>([]);
-  const [orderTaxRates, setOrderTaxRates] = useState<TaxRate[]>([]);
 
-  // * memoizing these functions ensures that their references dont change on every render
+  // * Add item to cart
   const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
-    // * prev is the previous state of the cart
     setCart((prev) => {
-      // * if the item already pressent in the cart (edge case: not being used in my app)
       if (prev[item.id]) {
         return {
           ...prev,
@@ -122,10 +107,11 @@ export function CartContextProvider({
         };
       }
       return {
-        ...prev, // * copies previous cart items
+        ...prev,
         [item.id]: { ...item, quantity: 1 },
       };
     });
+
   }, []);
 
   const removeFromCart = useCallback((id: string) => {
@@ -138,9 +124,8 @@ export function CartContextProvider({
 
   const updateQuantity = useCallback((id: string, quantity: number) => {
     setCart((prev) => {
-      if (!prev[id]) return prev; // * if item is not in cart already (edge case)
+      if (!prev[id]) return prev;
       if (quantity <= 0) {
-        // * edge case (not applicable in my app as of now)
         const newCart = { ...prev };
         delete newCart[id];
         return newCart;
@@ -152,7 +137,7 @@ export function CartContextProvider({
     });
   }, []);
 
-  // * discount methods
+  // * Apply discount to item
   const applyItemDiscount = useCallback(
     (itemId: string, discount: Discount) => {
       setCart((prev) => {
@@ -161,11 +146,7 @@ export function CartContextProvider({
           ...prev,
           [itemId]: {
             ...prev[itemId],
-            itemDiscount:
-              discount.type === "FIXED_PERCENTAGE"
-                ? (prev[itemId].price ?? 0) * (discount.percentage ?? 0 / 100)
-                : discount.percentage,
-            itemDiscountId: discount.id,
+            itemDiscount: discount,
           },
         };
       });
@@ -173,10 +154,11 @@ export function CartContextProvider({
     []
   );
 
+  // * Remove discount from item
   const removeItemDiscount = useCallback((itemId: string) => {
     setCart((prev) => {
       if (!prev[itemId]) return prev;
-      const { itemDiscount, itemDiscountId, ...rest } = prev[itemId];
+      const { itemDiscount, ...rest } = prev[itemId];
       return {
         ...prev,
         [itemId]: rest,
@@ -184,19 +166,7 @@ export function CartContextProvider({
     });
   }, []);
 
-  const applyOrderDiscount = useCallback((discount: Discount) => {
-    setOrderDiscounts((prev) => {
-      // Check if discount already exists
-      if (prev.some((d) => d.id === discount.id)) return prev;
-      return [...prev, discount];
-    });
-  }, []);
-
-  const removeOrderDiscount = useCallback((discountId: string) => {
-    setOrderDiscounts((prev) => prev.filter((d) => d.id !== discountId));
-  }, []);
-
-  // * enables or disables the taxable property of an item
+  // * Toggle tax for item
   const toggleItemTax = useCallback((itemId: string, enabled: boolean) => {
     setCart((prev) => {
       if (!prev[itemId]) return prev;
@@ -210,7 +180,7 @@ export function CartContextProvider({
     });
   }, []);
 
-  // * used to set the selected tax rate on the item
+  // * Set tax rate for item
   const setItemTaxRate = useCallback((itemId: string, taxRate: number) => {
     setCart((prev) => {
       if (!prev[itemId]) return prev;
@@ -224,84 +194,81 @@ export function CartContextProvider({
     });
   }, []);
 
-  const setOrderTaxRate = useCallback((taxRate: TaxRate) => {
-    setOrderTaxRates((prev) => {
-      // Check if tax rate already exists
-      if (prev.some((t) => t.id === taxRate.id)) return prev;
-      return [...prev, taxRate];
-    });
-  }, []);
-
-  const removeOrderTaxRate = useCallback((taxRateId: string) => {
-    setOrderTaxRates((prev) => prev.filter((t) => t.id !== taxRateId));
-  }, []);
-
-  // * ORDER SUMMARY
+  // * Calculate order summary
   const getOrderSummary = useCallback((): OrderSummary => {
     const items = Object.values(cart);
+    let subtotal = 0;
+    let discountAmount = 0;
+    let taxAmount = 0;
+    const appliedDiscounts: Discount[] = [];
+    const appliedTaxRates: TaxRate[] = [];
 
-    // Calculate subtotal
-    const subtotal = items.reduce(
-      (sum, item) => sum + (item.price ?? 0) * item.quantity,
-      0
-    );
+    for (const item of items) {
+      let itemPrice = item.price ?? 0;
+      let itemSubtotal = itemPrice * item.quantity;
+      let itemDiscountValue = 0;
+      let itemTaxValue = 0;
 
-    // Calculate item-level discounts
-    const itemDiscounts = items.reduce(
-      (sum, item) => sum + (item.itemDiscount ?? 0) * item.quantity,
-      0
-    );
-
-    // Calculate order-level discounts
-    const orderDiscountAmount = orderDiscounts.reduce((sum, discount) => {
-      if (
-        discount.minimumOrderAmount &&
-        subtotal < discount.minimumOrderAmount
-      ) {
-        return sum;
+      // * Apply discount if present
+      if (item.itemDiscount) {
+        appliedDiscounts.push(item.itemDiscount);
+        const value = item.itemDiscount.discount_value;
+        // BOGO: 100% off for every second item
+        if (value === "100%" || value === 100) {
+          if (item.quantity >= 2) {
+            // * Number of free items = floor(quantity / 2)
+            const freeItems = Math.floor(item.quantity / 2);
+            itemDiscountValue = freeItems * itemPrice;
+          } else {
+            // Less than 2 items, no BOGO discount
+            itemDiscountValue = 0;
+          }
+        } else if (typeof value === "string" && value.includes("%")) {
+          // Percentage discount
+          const percent = parseFloat(value);
+          if (!isNaN(percent)) {
+            itemDiscountValue = (itemSubtotal * percent) / 100;
+          }
+        } else if (typeof value === "number") {
+          // Fixed amount discount
+          itemDiscountValue = value * item.quantity;
+        } else if (typeof value === "string") {
+          // Try to parse as number
+          const num = parseFloat(value);
+          if (!isNaN(num)) {
+            itemDiscountValue = num * item.quantity;
+          }
+        }
       }
-      if (discount.type === "FIXED_PERCENTAGE") {
-        return sum + subtotal * (discount.percentage ?? 0 / 100);
-      } else {
-        return sum + (discount.percentage ?? 0);
+      const discountedSubtotal = itemSubtotal - itemDiscountValue;
+      discountAmount += itemDiscountValue;
+
+      // * Apply tax if present and enabled
+      if (item.is_taxable && item.itemTaxRate !== undefined) {
+        appliedTaxRates.push({
+          name:
+            item.taxes?.find((t) => Number(t.percentage) === item.itemTaxRate)
+              ?.name || "Tax",
+          percentage: item.itemTaxRate,
+        });
+        itemTaxValue = (discountedSubtotal * item.itemTaxRate) / 100;
       }
-    }, 0);
-
-    const totalDiscountAmount = itemDiscounts + orderDiscountAmount;
-    const amountAfterDiscounts = subtotal - totalDiscountAmount;
-
-    // Calculate taxes
-    const taxAmount = items.reduce((sum, item) => {
-      if (!item.is_taxable) return sum;
-      const itemSubtotal = (item.price ?? 0) * item.quantity;
-      const itemDiscount = (item.itemDiscount ?? 0) * item.quantity;
-      const itemAmountAfterDiscount = itemSubtotal - itemDiscount;
-      const itemTaxRate = item.itemTaxRate ?? 0;
-
-      // Add order-level tax rates
-      const orderTaxAmount = orderTaxRates.reduce((taxSum, taxRate) => {
-        return taxSum + itemAmountAfterDiscount * (taxRate.percentage / 100);
-      }, 0);
-
-      return sum + itemAmountAfterDiscount * itemTaxRate + orderTaxAmount;
-    }, 0);
-
-    const total = amountAfterDiscounts + taxAmount;
-
+      taxAmount += itemTaxValue;
+      subtotal += discountedSubtotal;
+    }
+    const total = subtotal + taxAmount;
     return {
       subtotal,
-      discountAmount: totalDiscountAmount,
+      discountAmount,
       taxAmount,
       total,
-      appliedDiscounts: orderDiscounts,
-      appliedTaxRates: orderTaxRates,
+      appliedDiscounts,
+      appliedTaxRates,
     };
-  }, [cart, orderDiscounts, orderTaxRates]);
+  }, [cart]);
 
   const clearCart = useCallback(() => {
     setCart({});
-    setOrderDiscounts([]);
-    setOrderTaxRates([]);
   }, []);
 
   return (
@@ -313,12 +280,8 @@ export function CartContextProvider({
         updateQuantity,
         applyItemDiscount,
         removeItemDiscount,
-        applyOrderDiscount,
-        removeOrderDiscount,
         toggleItemTax,
         setItemTaxRate,
-        setOrderTaxRate,
-        removeOrderTaxRate,
         getOrderSummary,
         clearCart,
       }}

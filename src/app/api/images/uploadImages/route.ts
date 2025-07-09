@@ -11,13 +11,12 @@ const IMAGES_DIR = path.join(process.cwd(), "images_jpg");
 const OUT_JSON = path.join(process.cwd(), "square_image_ids.json");
 const DATA_PATH = path.join(process.cwd(), "data.json");
 
-// Helper to get product info by SKU
+// * helper to get product info by SKU
 function getProductInfoBySku(sku: string, products: any[]): { title?: string } {
   return products.find((p) => p.sku === sku) || {};
 }
 
 async function uploadImage(filePath: string, fileName: string, accessToken: string, products: any[]) {
-  // Extract SKU from filename (e.g., SKU_0.jpg)
   const sku = fileName.split('_')[0];
   const product = getProductInfoBySku(sku, products);
   const title = product.title || sku;
@@ -37,7 +36,7 @@ async function uploadImage(filePath: string, fileName: string, accessToken: stri
       },
       idempotency_key: uuidv4(),
       is_primary: true,
-      // object_id: "PR23EJW6JXOLAB2OMNKWOHBY", // Set if you want to associate immediately
+      // object_id: "PR23EJW6JXOLAB2OMNKWOHBY", // set it to associate immediately
     }),
     { contentType: "application/json" }
   );

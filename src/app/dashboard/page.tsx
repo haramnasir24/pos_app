@@ -12,9 +12,7 @@ import ProductSectionSkeleton from "../components/dashboard/products/ProductSect
 export default async function DashboardPage() {
   // * check the session
   const session = await getServerSession(authOptions);
-  // console.log("session:", session);
-  // console.log(session?.accessToken);
-
+  
   if (!session) {
     redirect("/");
   }
@@ -32,7 +30,15 @@ export default async function DashboardPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          object_types: ["ITEM", "IMAGE", "CATEGORY", "TAX", "DISCOUNT"],
+          object_types: [
+            "ITEM",
+            "IMAGE",
+            "CATEGORY",
+            "TAX",
+            "DISCOUNT",
+            "PRICING_RULE",
+            "PRODUCT_SET",
+          ],
           include_related_objects: true,
         }),
       }
@@ -50,6 +56,7 @@ export default async function DashboardPage() {
   const variationIds = items?.flatMap(
     (item: any) => item.item_data?.variations?.map((v: any) => v.id) ?? []
   );
+
 
   // * fetching inventory server side
   let inventoryData = null;

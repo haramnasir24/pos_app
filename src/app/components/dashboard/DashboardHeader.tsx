@@ -1,15 +1,12 @@
 import { DashboardSignOutButton } from "./DashboardSignOutButton";
 import { css } from "../../../../styled-system/css";
 import { container } from "../../../../styled-system/patterns";
-import CartDrawer from "./CartDrawer";
 
 export default function DashboardHeader() {
   return (
     <header
       className={css({
         bg: "white",
-        // borderBottom: "1px solid",
-        // borderColor: "gray.200",
         px: "6",
         py: "4",
         shadow: "sm",

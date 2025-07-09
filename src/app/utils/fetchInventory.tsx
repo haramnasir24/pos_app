@@ -1,10 +1,10 @@
-import { useState } from "react";
-
 export async function fetchInventory(
   accessToken: string,
   variationIds: string[]
 ) {
-  // const [inventoryData, setInventoryData] = useState(null);
+  if (!accessToken) {
+    return null;
+  }
   if (!variationIds || variationIds.length === 0) return;
 
   try {

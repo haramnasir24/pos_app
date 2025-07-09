@@ -1,3 +1,5 @@
+"use client";
+
 // this is a hook that fetches products from the Square API
 
 import { useQuery } from "@tanstack/react-query";

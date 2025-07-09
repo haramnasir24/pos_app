@@ -2,9 +2,9 @@
 
 import { css } from "../../../../../styled-system/css";
 import ProductCard from "./ProductCard";
-import CartDrawer from "../CartDrawer";
+import CartDrawer from "../cart/CartDrawer";
 import Loader from "../Loader";
-import SearchBar from "../SearchBar";
+import SearchBar from "../search/SearchBar";
 import FilterButton from "../filter/FilterButton";
 import { useProductSectionData } from "../../../hooks/useProductSectionData";
 
@@ -30,11 +30,10 @@ export default function ProductSection({
     cartInventoryInfo,
     inventoryMap,
     imageMap,
+    variationIds,
     categoryObjects,
+    discountApplications,
   } = useProductSectionData({ accessToken, products, inventory });
-
-  // *  it is an array of objects with id and name
-  // console.log(categoryObjects);
 
   return (
     <div className={css({ w: "full", mt: "8" })}>
@@ -42,10 +41,9 @@ export default function ProductSection({
       <CartDrawer
         accessToken={accessToken}
         cartInventoryInfo={cartInventoryInfo}
-        taxes_data={taxes_data}
-        discounts={discounts_data}
+        taxes_data={taxes_data} // * remove this
+        itemVariationIds={variationIds}
       />
-
       <div
         className={css({
           display: "flex",
@@ -66,7 +64,6 @@ export default function ProductSection({
           prevParams={params}
         />
       </div>
-
       {isPending && !products && <Loader />}
       {error && <div>Error loading products</div>}
       {!isPending && !error && items.length === 0 && (
@@ -74,7 +71,6 @@ export default function ProductSection({
           No items found
         </div>
       )}
-
       <div
         className={css({
           display: "grid",
@@ -90,13 +86,13 @@ export default function ProductSection({
           const price = variation?.price_money?.amount ?? null;
           const imageId = item.item_data?.image_ids?.[0];
           const imageUrl = imageId ? imageMap[imageId] : "/placeholder.jpg";
-          const is_taxable = item.item_data?.is_taxable;
-          // const is_taxable = false;
+          const is_taxable = item.item_data?.is_taxable; // * all items are taxable in this case, value is True always
           const tax_ids = item.item_data?.tax_ids;
-          // const tax_ids = ["QIRBKGD6VQ2ENYHOZNG4U5EL"]; // * sales tax id
-          // const tax_id = tax_ids[0];
-          const categoryId = item.item_data?.categories[0]?.id;
-          const category = categoryObjects.find((obj: any) => obj?.id === categoryId);
+
+          const categoryId = item.item_data?.categories?.[0]?.id;
+          const category = categoryObjects.find(
+            (obj: any) => obj?.id === categoryId
+          );
 
           // * match these tax ids with the retrieved taxes_data
           const matchedTaxes = (tax_ids ?? []).map((tax_id: string) => {
@@ -104,10 +100,48 @@ export default function ProductSection({
             return tax ? { name: tax.name, percentage: tax.percentage } : null;
           });
 
+          // console.log(matchedTaxes);
+
+          // * structure of tax for each item
+          // [
+          //   { name: 'Sales Tax', percentage: 8.5 },
+          //   { name: 'State Tax', percentage: 2 }
+          // ]
+
           const salesTax = matchedTaxes.filter(
             (obj: any) => obj?.name === "Sales Tax"
           );
           const itemTaxRate = salesTax[0]?.percentage; // * applying sales tax for each item by default
+
+          // * build discounts array for each item
+          const discounts = discountApplications
+            .filter((app: any) => {
+              if (app.applied_product_ids.includes(item.id)) return true;
+              if (categoryId && app.applied_product_ids.includes(categoryId))
+                return true;
+              return false;
+            })
+            .map((app: any) => ({
+              discount_name: app.discount_name,
+              discount_value: app.discount_value,
+            }));
+
+          // console.log(discounts);
+
+          // * structure of discount for each item
+          //   [{
+          //     discount_name: 'Summer Sale: 10% Off All Items',
+          //     discount_value: '10%'
+          //   },
+          //   {
+          //     discount_name: 'Buy One Get One Free',
+          //     discount_value: '100%'
+          //   }
+          // ]
+
+          // console.log(discounts);
+
+          // * inventory management
           const inventory = variationId ? inventoryMap[variationId] : undefined;
           const state = inventory?.state ?? "Unknown";
           const quantity = inventory?.quantity ?? "-";
@@ -131,8 +165,9 @@ export default function ProductSection({
                 state={state}
                 quantity={quantity}
                 is_taxable={is_taxable}
-                itemTaxRate={itemTaxRate}
-                category={category?.name}
+                variantId={variationId}
+                discounts={discounts}
+                taxes={matchedTaxes}
               />
             </div>
           );

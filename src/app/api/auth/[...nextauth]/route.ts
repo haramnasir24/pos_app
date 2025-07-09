@@ -15,7 +15,7 @@ export const authOptions: NextAuthOptions = {
         url: `${process.env.SQUARE_API_BASE}/oauth2/authorize`,
         params: {
           scope:
-            "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE INVENTORY_READ INVENTORY_WRITE", // permissions allowed
+            "MERCHANT_PROFILE_READ ITEMS_READ ITEMS_WRITE INVENTORY_READ INVENTORY_WRITE ORDERS_READ ORDERS_WRITE", // * permissions allowed
           response_type: "code",
         },
       },
@@ -65,7 +65,7 @@ export const authOptions: NextAuthOptions = {
           );
           const data = await res.json();
           // console.log(data.merchant);
-          return data; 
+          return data;
         },
       },
       profile(profile) {

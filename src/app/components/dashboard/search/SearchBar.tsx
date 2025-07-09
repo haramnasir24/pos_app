@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 
-import { css } from "../../../../styled-system/css";
+import { css } from "../../../../../styled-system/css";
 import { useDebounce } from "@/app/hooks/useDebounce";
 
 interface SearchBarProps {
@@ -11,7 +11,6 @@ interface SearchBarProps {
 }
 
 // Debounce hook
-
 export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
   const [searchInput, setSearchInput] = useState("");
   // ? does debounced search depends on search input
@@ -31,7 +30,7 @@ export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
     } else {
       // If less than 3 chars, show initial product listing, remove search query
       setParams({
-        types: "item, image, category, tax, discount",
+        types: "item, image, category, tax, discount, pricing_rule, product_set",
         query: {
           ...prevParams.query,
           text_query: undefined,

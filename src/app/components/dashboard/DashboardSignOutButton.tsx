@@ -1,7 +1,6 @@
 "use client";
 
 import { signOut } from "next-auth/react";
-
 import { css } from "../../../../styled-system/css";
 
 export function DashboardSignOutButton() {
@@ -20,17 +19,8 @@ export function DashboardSignOutButton() {
         cursor: "pointer",
         _hover: {
           bg: "red.600",
-          // transform: "translateY(-1px)",
           shadow: "md",
         },
-        // _active: {
-        //   transform: "translateY(0)",
-        // },
-        // _focus: {
-        //   outline: "2px solid",
-        //   outlineColor: "gray.500",
-        //   outlineOffset: "2px",
-        // },
       })}
     >
       Sign Out

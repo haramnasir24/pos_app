@@ -13,9 +13,12 @@ interface ProductCardProps {
   quantity?: string | number;
   is_taxable?: boolean | undefined;
   itemTaxRate?: number;
-  itemDiscount?: number;
-  category?: string;
   variantId?: string;
+  discounts?: Array<{
+    discount_name: string;
+    discount_value: string | number | null;
+  }>;
+  taxes?: Array<{ name: string; percentage: string | number | null }>;
 }
 
 export default function ProductCard({
@@ -27,9 +30,9 @@ export default function ProductCard({
   quantity,
   is_taxable,
   itemTaxRate,
-  itemDiscount,
-  category,
   variantId,
+  discounts,
+  taxes,
 }: ProductCardProps) {
   const { cart, addToCart, removeFromCart, updateQuantity } =
     useContext(CartContext);
@@ -73,7 +76,6 @@ export default function ProductCard({
           height={180}
           style={{ objectFit: "contain", maxHeight: "100%" }}
           className={css({ borderRadius: "md" })}
-          onError={(e) => (e.currentTarget.src = "/placeholder.jpg")}
         />
       </div>
 
@@ -183,7 +185,16 @@ export default function ProductCard({
               cursor: isOutOfStock ? "not-allowed" : undefined,
             })}
             onClick={() =>
-              addToCart({ id, name, price, imageUrl, is_taxable, itemTaxRate, category, variantId })
+              addToCart({
+                id,
+                name,
+                price,
+                imageUrl,
+                is_taxable: false,
+                variantId,
+                discounts,
+                taxes,
+              })
             }
             disabled={isOutOfStock}
           >

@@ -1,3 +1,5 @@
+// * api endpoint for getting the inventory count
+
 import { NextRequest, NextResponse } from "next/server";
 import axios from "axios";
 
@@ -5,18 +7,30 @@ const SQUARE_VERSION = "2025-06-18";
 
 export async function POST(req: NextRequest) {
   try {
-    const accessToken = req.headers.get("authorization")?.replace("Bearer ", "");
+    const accessToken = req.headers
+      .get("authorization")
+      ?.replace("Bearer ", "");
     if (!accessToken) {
-      return NextResponse.json({ error: "Missing Authorization header" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Missing Authorization header" },
+        { status: 401 }
+      );
     }
 
     const body = await req.json();
     const { variationIds, locationIds } = body;
-    if (!variationIds || !Array.isArray(variationIds) || variationIds.length === 0) {
-      return NextResponse.json({ error: "Missing or invalid variationIds array" }, { status: 400 });
+    if (
+      !variationIds ||
+      !Array.isArray(variationIds) ||
+      variationIds.length === 0
+    ) {
+      return NextResponse.json(
+        { error: "Missing or invalid variationIds array" },
+        { status: 400 }
+      );
     }
 
-    // pptionally allow locationIds to be passed, otherwise omit
+    // optionally allow locationIds to be passed, otherwise omit
     const payload = {
       catalog_object_ids: variationIds,
       ...(locationIds ? { location_ids: locationIds } : {}),
