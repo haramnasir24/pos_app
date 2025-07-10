@@ -1,4 +1,4 @@
-import LockIcon from "@/app/components/home/LockIcon";
+import LockIcon from "@/app/components/home/signin/LockIcon";
 
 import { css } from "../../../../../styled-system/css";
 

@@ -2,7 +2,7 @@ import { signIn } from "next-auth/react";
 
 import { HandleOAuthCallbackProps } from "../../types/handleOAuthCallback";
 
-// can this be a server action?
+// ? can this be a server action?
 const handleOAuthCallback = async ({ code, setError, setIsProcessing} : HandleOAuthCallbackProps) => {
   try {
     console.log("Processing OAuth callback with code:", code);

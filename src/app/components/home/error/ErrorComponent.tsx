@@ -1,7 +1,7 @@
 import { ErrorProps } from "@/app/types/error";
 
-import { css } from "../../../../styled-system/css";
-import { flex } from "../../../../styled-system/patterns";
+import { css } from "../../../../../styled-system/css";
+import { flex } from "../../../../../styled-system/patterns";
 
 export default function ErrorComponent({ error }: ErrorProps) {
   return (

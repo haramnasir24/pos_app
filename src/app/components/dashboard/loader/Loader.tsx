@@ -1,14 +1,13 @@
-import { css } from "../../../../styled-system/css";
+import { css } from "../../../../../styled-system/css";
 
 export default function Loader() {
   return (
     <div
       className={css({
-        minHeight: "100vh",
+        minHeight: "30vh",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(to bottom right, #eff6ff, #e0e7ff)",
       })}
     >
       <div
@@ -25,7 +24,7 @@ export default function Loader() {
             borderRadius: "50%",
             height: "64px",
             width: "64px",
-            border: "4px solid #3b82f6",
+            border: "4px solid rgb(39, 39, 39)",
             borderTopColor: "transparent",
             margin: "0 auto",
           })}

@@ -11,6 +11,13 @@ import {
   ORDER_LEVEL_TAXES,
 } from "@/app/constant/order_discounts_taxes";
 
+/**
+ * Props for the CartDrawer component.
+ * @property {string} [accessToken] - Optional access token for API calls.
+ * @property {Record<string, { state: string; quantity: string }>} cartInventoryInfo - Inventory info for cart items.
+ * @property {TaxRate[]} taxes_data - List of available tax rates.
+ * @property {string[]} itemVariationIds - List of item variation IDs.
+ */
 type CartDrawerProps = {
   accessToken?: string;
   cartInventoryInfo: Record<string, { state: string; quantity: string }>;
@@ -18,11 +25,20 @@ type CartDrawerProps = {
   itemVariationIds: string[];
 };
 
+/**
+ * Represents the selected tax state for an item.
+ * @property {number} [itemTaxRate] - Selected tax rate for the item.
+ * @property {boolean} [enabled] - Whether tax is enabled for the item.
+ */
 type SelectedTax = {
   itemTaxRate?: number;
   enabled?: boolean;
 };
 
+/**
+ * Drawer component for displaying and managing the shopping cart.
+ * Handles item-level and order-level discounts/taxes, inventory, and checkout.
+ */
 export default function CartDrawer({
   accessToken,
   cartInventoryInfo,
@@ -65,15 +81,17 @@ export default function CartDrawer({
       item.itemDiscount || (item.is_taxable && item.itemTaxRate !== undefined)
   );
 
-  // ? utility functions for cart drawer (add them in util folder)
-  // * clear item-level discounts/taxes if order-level is selected
+  /**
+   * Handles switching between order-level and item-level discounts/taxes.
+   * Clears item-level discounts/taxes when order-level is selected.
+   * @param {"discount"|"tax"} type - Type of order-level change.
+   * @param {any} value - Selected discount or tax value.
+   */
   const handleOrderLevelChange = (type: "discount" | "tax", value: any) => {
     if (type === "discount") {
       setSelectedOrderDiscount(value);
-      // setSelectedOrderTax(null); // only one can be active
     } else {
       setSelectedOrderTax(value);
-      // setSelectedOrderDiscount(null); // only one can be active
     }
     // clear all item-level discounts/taxes
     items.forEach((item) => {
@@ -86,13 +104,17 @@ export default function CartDrawer({
     });
   };
 
-  // * clear order-level if any item-level is selected
+  /**
+   * Clears order-level discount/tax if any item-level discount/tax is selected.
+   */
   const handleItemLevelChange = () => {
     setSelectedOrderDiscount(null);
     setSelectedOrderTax(null);
   };
 
-  // * calculate order summary with order-level discount/tax if selected
+  /**
+   * Calculates the order summary for the drawer, considering order-level discounts/taxes if selected.
+   */
   const getDrawerOrderSummary = () => {
     if (isOrderLevelActive) {
       // Uniformly distribute order-level discount/tax
@@ -125,7 +147,11 @@ export default function CartDrawer({
 
   const drawerOrderSummary = getDrawerOrderSummary();
 
-  // * handle discount toggle
+  /**
+   * Handles toggling of item-level discounts.
+   * @param {any} item - The cart item.
+   * @param {boolean} checked - Whether the discount is applied.
+   */
   const handleDiscountToggle = (item: any, checked: boolean) => {
     handleItemLevelChange();
     if (checked && selectedDiscounts[item.id]) {
@@ -135,7 +161,11 @@ export default function CartDrawer({
     }
   };
 
-  // * handle discount select
+  /**
+   * Handles selection of a discount for an item.
+   * @param {any} item - The cart item.
+   * @param {any} discount - The selected discount.
+   */
   const handleDiscountSelect = (item: any, discount: any) => {
     setSelectedDiscounts((prev) => ({
       ...prev,
@@ -143,13 +173,21 @@ export default function CartDrawer({
     }));
   };
 
-  // * handle tax toggle
+  /**
+   * Handles toggling of item-level taxes.
+   * @param {any} item - The cart item.
+   * @param {boolean} checked - Whether the tax is applied.
+   */
   const handleTaxToggle = (item: any, checked: boolean) => {
     handleItemLevelChange();
     toggleItemTax(item.id, checked);
   };
 
-  // * handle tax select
+  /**
+   * Handles selection of a tax rate for an item.
+   * @param {any} item - The cart item.
+   * @param {string} value - The selected tax rate value.
+   */
   const handleTaxSelect = (item: any, value: string) => {
     const taxRate = value === "" ? undefined : parseFloat(value);
     setSelectedTaxes((prev) => ({
@@ -179,10 +217,15 @@ export default function CartDrawer({
           borderRadius: "md",
           fontWeight: "bold",
           _hover: { bg: "blue.700" },
+          display: "flex",
+          alignItems: "center",
+          gap: "2",
         })}
         onClick={() => setOpen(true)}
+        aria-label={`Open cart with ${items.length} items`}
       >
-        Cart ({items.length}){/* <MdOutlineAddShoppingCart /> */}
+        <MdOutlineAddShoppingCart size={22} />
+        <span>({items.length})</span>
       </button>
       <div
         className={cx(
@@ -231,7 +274,7 @@ export default function CartDrawer({
               <p className={css({ color: "gray.500" })}>Your cart is empty.</p>
             ) : (
               <div className={css({ flex: 1, overflowY: "auto" })}>
-                {items.map((item) => {
+                {items.map((item, idx) => {
                   const inventory = cartInventoryInfo[item.id];
                   const state = inventory?.state ?? "Unknown";
                   const quantity = inventory?.quantity ?? "-";
@@ -248,6 +291,7 @@ export default function CartDrawer({
 
                   return (
                     <div
+                      key={idx}
                       className={css({
                         py: "2",
                         px: "3",
@@ -606,19 +650,18 @@ export default function CartDrawer({
               <button
                 className={css({
                   w: "full",
-                  bg: "red.500",
-                  color: "white",
+                  bg: "gray.200",
+                  color: "black",
                   py: "2",
                   borderRadius: "md",
-                  fontWeight: "bold",
+                  fontWeight: "semibold",
                   fontSize: "sm",
-                  _hover: { bg: "red.600" },
+                  _hover: { bg: "gray.300" },
                 })}
                 disabled={items.length === 0}
                 onClick={() => {
                   clearCart();
                   setShowCheckout(false);
-                  setOpen(false);
                 }}
               >
                 Clear Cart

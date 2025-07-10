@@ -1,6 +1,21 @@
 "use client";
 import { createContext, useState, useCallback } from "react";
 
+/**
+ * Represents an item in the cart.
+ * @property {string} id - Unique identifier for the item.
+ * @property {string} name - Name of the item.
+ * @property {number|null} price - Price of the item in cents (or null if unavailable).
+ * @property {string} imageUrl - URL of the item's image.
+ * @property {number} quantity - Quantity of the item in the cart.
+ * @property {boolean|undefined} is_taxable - Whether the item is taxable.
+ * @property {number} [itemTaxRate] - Selected tax rate (percentage).
+ * @property {string} [category] - Category of the item.
+ * @property {Discount} [itemDiscount] - Applied discount object.
+ * @property {string} [variantId] - Variant ID of the item.
+ * @property {Array<{discount_name: string, discount_value: string|number|null}>} [discounts] - Discounts available for the item.
+ * @property {Array<{name: string, percentage: string|number|null}>} [taxes] - Taxes available for the item.
+ */
 export type CartItem = {
   id: string;
   name: string;
@@ -19,16 +34,35 @@ export type CartItem = {
   taxes?: Array<{ name: string; percentage: string | number | null }>;
 };
 
+/**
+ * Represents a discount applied to an item or order.
+ * @property {string} discount_name - Name of the discount.
+ * @property {string|number|null} discount_value - Value of the discount (percentage or fixed amount).
+ */
 export type Discount = {
   discount_name: string;
   discount_value: string | number | null;
 };
 
+/**
+ * Represents a tax rate.
+ * @property {string} name - Name of the tax.
+ * @property {number} percentage - Tax percentage.
+ */
 export type TaxRate = {
   name: string;
   percentage: number;
 };
 
+/**
+ * Represents a summary of the order, including subtotal, discounts, taxes, and total.
+ * @property {number} subtotal - Subtotal before discounts and taxes.
+ * @property {number} discountAmount - Total discount amount applied.
+ * @property {number} taxAmount - Total tax amount applied.
+ * @property {number} total - Final total after discounts and taxes.
+ * @property {Discount[]} appliedDiscounts - List of applied discounts.
+ * @property {TaxRate[]} appliedTaxRates - List of applied tax rates.
+ */
 export type OrderSummary = {
   subtotal: number; // * sub-total before discounts and taxes
   discountAmount: number;
@@ -38,16 +72,30 @@ export type OrderSummary = {
   appliedTaxRates: TaxRate[];
 };
 
+/**
+ * Represents the cart as an object with item IDs as keys and CartItem as values.
+ * Used to loop up cart items using their ids
+ */
 export type Cart = {
-  // * this is an object of key of string type and value of cartItem type
-  // * used to look up cart items using their ids
   [id: string]: CartItem;
 };
 
-// * this defines the shape of the cartContext object
+/**
+ * Defines the shape of the CartContext object and its methods.
+ * @interface CartContextType
+ * @property {Cart} cart - Current cart state.
+ * @property {(item: Omit<CartItem, 'quantity'>) => void} addToCart - Add an item to the cart.
+ * @property {(id: string) => void} removeFromCart - Remove an item from the cart by ID.
+ * @property {(id: string, quantity: number) => void} updateQuantity - Update the quantity of an item.
+ * @property {(itemId: string, discount: Discount) => void} applyItemDiscount - Apply a discount to an item.
+ * @property {(itemId: string) => void} removeItemDiscount - Remove a discount from an item.
+ * @property {(itemId: string, enabled: boolean) => void} toggleItemTax - Toggle tax on or off for an item.
+ * @property {(itemId: string, taxRate: number) => void} setItemTaxRate - Set the tax rate for an item.
+ * @property {() => OrderSummary} getOrderSummary - Get the current order summary.
+ * @property {() => void} clearCart - Clear all items from the cart.
+ */
 interface CartContextType {
-  cart: Cart; // * cart is the current cart state
-  // * cart methods
+  cart: Cart;
   addToCart: (item: Omit<CartItem, "quantity">) => void; // * addToCart function to add an item (without specifying quantity, which defaults to 1)
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
@@ -56,14 +104,15 @@ interface CartContextType {
   removeItemDiscount: (itemId: string) => void;
   toggleItemTax: (itemId: string, enabled: boolean) => void;
   setItemTaxRate: (itemId: string, taxRate: number) => void;
-  // * Order summary
   getOrderSummary: () => OrderSummary;
-  // * Clear cart
   clearCart: () => void;
 }
 
-// * cart context is initialised here
+/**
+ * React context for managing the cart state and actions.
+ */
 export const CartContext = createContext<CartContextType>({
+  // * cart context is initialised here
   cart: {},
   addToCart: () => {},
   removeFromCart: () => {},
@@ -83,6 +132,9 @@ export const CartContext = createContext<CartContextType>({
   clearCart: () => {},
 });
 
+/**
+ * Provides the CartContext to its children and manages cart state and logic.
+ */
 export function CartContextProvider({
   children,
 }: {

@@ -1,8 +1,14 @@
-// ? Utility functions for CartDrawer
+// * Utility functions for CartDrawer
 
 import { OrderDiscount, OrderTax } from "@/app/types/order";
 
-// ? creates the order
+/**
+ * Creates the order data object for submission to the backend API.
+ * @param items - Array of cart items (must include variantId, quantity, id)
+ * @param orderDiscounts - Optional array of order-level discounts
+ * @param orderTaxes - Optional array of order-level taxes
+ * @returns Object containing idempotency_key and order payload
+ */
 export function createOrderData({
   items,
   orderDiscounts,
@@ -13,8 +19,6 @@ export function createOrderData({
   orderTaxes?: OrderTax[];
 }) {
   // * create line items for the order using variantId from cart items
-
-  console.log(orderDiscounts)
   const line_items = items
     .map((item) => {
       const variationId = item.variantId;
@@ -40,7 +44,7 @@ export function createOrderData({
       auto_apply_taxes: true,
     },
     line_items,
-    location_id: "LQT0VHHSADY7Z", // * default test account location id, add to env file
+    location_id: "LQT0VHHSADY7Z",
   };
 
   const discounts = orderDiscounts ?? [];
@@ -62,7 +66,13 @@ export function createOrderData({
   };
 }
 
-// ? calculates the order
+/**
+ * Calculates the order data for previewing totals, discounts, and taxes.
+ * @param items - Array of cart items (must include variantId, quantity, id)
+ * @param orderDiscounts - Optional array of order-level discounts
+ * @param orderTaxes - Optional array of order-level taxes
+ * @returns Object containing idempotency_key and order payload
+ */
 export function calculateOrderData({
   items,
   orderDiscounts,
@@ -86,7 +96,7 @@ export function calculateOrderData({
         catalog_object_id: variationId,
       };
     })
-    .filter(Boolean);
+    .filter(Boolean); // * removes null values from the filtered array
 
   // * generate a unique idempotency key
   const idempotency_key = crypto.randomUUID();
@@ -98,7 +108,7 @@ export function calculateOrderData({
       auto_apply_taxes: true,
     },
     line_items,
-    location_id: "LQT0VHHSADY7Z", // * default test account location id, add to env file
+    location_id: "LQT0VHHSADY7Z",
   };
 
   const discounts = orderDiscounts ?? [];
@@ -118,7 +128,12 @@ export function calculateOrderData({
   };
 }
 
-// ? toggles the item tax on or off
+/**
+ * Toggles the taxable status of a cart item.
+ * @param itemId - The ID of the item to toggle
+ * @param is_taxable - Whether the item should be taxable
+ * @param toggleItemTax - Callback to update the item's tax status
+ */
 export function handleItemTaxToggleUtil({
   itemId,
   is_taxable,

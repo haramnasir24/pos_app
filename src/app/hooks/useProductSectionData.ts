@@ -30,6 +30,11 @@ import {
   buildInventoryMap,
 } from "../utils/inventoryImageUtils";
 
+/**
+ * Custom hook to manage and aggregate all product section data for the dashboard.
+ * Handles fetching, transforming, and mapping of products, inventory, discounts, pricing rules, and categories.
+ * Uses server-side data if provided, otherwise fetches client-side.
+ */
 export function useProductSectionData({
   accessToken,
   products,
@@ -83,7 +88,7 @@ export function useProductSectionData({
     return products;
   }, [data, products]);
 
-  // console.log("Product data:", productData);
+  // console.log(productData);
 
   // * get the items
   const items = extractItems(productData);
@@ -94,15 +99,14 @@ export function useProductSectionData({
   // * variation ids are used for fetching inventory counts
   const variationIds = extractVariationIds(items);
 
-  // TODO: change this into a hook that runs only when the categories change
-  const categories = extractCategories(productData); // * get the categories for use in filter functionality
+  // * get the categories for use in filter functionality
+  const categories = extractCategories(productData);
 
   // * get all item IDs
   const allItemIds = extractItemIds(items);
 
   // * build image map for quick lookup of image URLs by image id
   const images = extractImages(productData);
-
   const imageMap = buildImageMap(images);
 
   // * use fetched discounts if available, otherwise fall back to product data

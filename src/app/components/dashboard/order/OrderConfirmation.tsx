@@ -3,6 +3,14 @@ import { createOrderData } from "@/app/utils/cart/cartDrawerUtils";
 import { useEffect, useState } from "react";
 import { css } from "~/styled-system/css/css.mjs";
 
+/**
+ * Props for the OrderConfirmation component.
+ * @property items - Array of cart items to confirm
+ * @property accessToken - Auth token for API requests
+ * @property orderDiscounts - Optional array of order-level discounts
+ * @property orderTaxes - Optional array of order-level taxes
+ * @property onClose - Callback to close the confirmation dialog
+ */
 type OrderConfirmationProps = {
   items: any[];
   accessToken: string;
@@ -11,6 +19,10 @@ type OrderConfirmationProps = {
   onClose: () => void;
 };
 
+/**
+ * Handles order creation and displays the result (success or error) with a summary.
+ * Shows loading, error, and success states for order processing.
+ */
 export const OrderConfirmation = ({
   items,
   accessToken,
@@ -23,6 +35,10 @@ export const OrderConfirmation = ({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    /**
+     * Creates the order by calling the backend API.
+     * Handles loading and error states.
+     */
     const createOrder = async () => {
       try {
         setIsProcessing(true);
@@ -34,8 +50,6 @@ export const OrderConfirmation = ({
           orderDiscounts,
           orderTaxes,
         });
-
-        console.log(orderData);
 
         // * make API call to square orders to create order
         const response = await fetch("/api/orders/create-order", {
@@ -68,20 +82,34 @@ export const OrderConfirmation = ({
   }, [items, accessToken]);
 
   // * retrieving order data from the orders api response
-  console.log(orderResult);
+  // console.log(orderResult);
 
-  // * to format cents to dollars
+  /**
+   * Formats a cent value as a dollar string.
+   * @param amount - Amount in cents
+   * @returns Formatted string in dollars
+   */
   const formatMoney = (amount: number | undefined) =>
     typeof amount === "number" ? `$${(amount / 100).toFixed(2)}` : "N/A";
 
-  // * to get tax/discount names by uid
+  /**
+   * Gets the tax name by UID from the order result.
+   * @param uid - Tax UID
+   * @returns Tax name or fallback
+   */
   const getTaxName = (uid: string) =>
     orderResult?.order?.taxes?.find((t: any) => t.uid === uid)?.name || "Tax";
+  /**
+   * Gets the discount name by UID from the order result.
+   * @param uid - Discount UID
+   * @returns Discount name or fallback
+   */
   const getDiscountName = (uid: string) =>
     orderResult?.order?.discounts?.find((d: any) => d.uid === uid)?.name ||
     "Discount";
 
   if (isProcessing) {
+    // * Loading state UI
     return (
       <div
         className={css({
@@ -111,6 +139,7 @@ export const OrderConfirmation = ({
   }
 
   if (error) {
+    // * Error state UI
     return (
       <div
         className={css({

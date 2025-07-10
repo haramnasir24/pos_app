@@ -4,6 +4,9 @@ import { css } from "../../../../../styled-system/css";
 import Image from "next/image";
 import { CartContext } from "../../../context/CartContext";
 
+/**
+ * Props for the ProductCard component.
+ */
 interface ProductCardProps {
   id: string;
   name: string;
@@ -21,6 +24,10 @@ interface ProductCardProps {
   taxes?: Array<{ name: string; percentage: string | number | null }>;
 }
 
+/**
+ * Card component for displaying product information and cart controls.
+ * Handles inventory, pricing, and add/remove/update cart actions.
+ */
 export default function ProductCard({
   id,
   name,
@@ -39,10 +46,18 @@ export default function ProductCard({
   // * retrieves the cart item from the cart object using the id
   const cartItem = cart[id];
 
-  // * inventory management
+  /**
+   * The available inventory quantity for the product.
+   */
   const inventoryQty =
     typeof quantity === "string" ? parseInt(quantity, 10) : quantity ?? 0;
+  /**
+   * Whether the product is out of stock.
+   */
   const isOutOfStock = !inventoryQty || inventoryQty <= 0;
+  /**
+   * Whether the cart already has the maximum allowed quantity for this product.
+   */
   const atMaxQty = cartItem && cartItem.quantity >= inventoryQty;
 
   return (

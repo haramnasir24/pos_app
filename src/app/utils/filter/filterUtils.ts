@@ -53,3 +53,32 @@ export const getCategoryIds = (categories: CategoryObj[]): string[] => {
 export const getCategoryNames = (categories: CategoryObj[]): string[] => {
   return categories.map((category) => category.name);
 };
+
+/**
+ * Builds the filter params object for category filtering.
+ * @param {CategoryObj[]} selected - Selected categories.
+ * @param {Record<string, any>} prevParams - Previous params object.
+ * @returns {Record<string, any>} The new params object for setParams.
+ */
+export function buildCategoryFilterParams(selected: CategoryObj[], prevParams: Record<string, any>): Record<string, any> {
+  if (selected && selected.length > 0) {
+    return {
+      ...prevParams,
+      query: {
+        ...prevParams.query,
+        set_query: {
+          attribute_values: selected.map((category) => category.id),
+          attribute_name: "categories",
+        },
+      },
+    };
+  } else {
+    return {
+      types: "item, image, category, tax, discount, pricing_rule, product_set",
+      query: {
+        ...prevParams.query,
+        set_query: undefined,
+      },
+    };
+  }
+}

@@ -5,15 +5,21 @@ import { useState, useEffect } from "react";
 import { css } from "../../../../../styled-system/css";
 import { useDebounce } from "@/app/hooks/useDebounce";
 
+/**
+ * Props for the SearchBar component.
+ */
 interface SearchBarProps {
   setParams: (params: Record<string, any>) => void;
   prevParams: Record<string, any>;
 }
 
-// Debounce hook
+/**
+ * Search bar component for filtering products by keyword with debounce.
+ * Updates params when the user types at least 3 characters.
+ */
 export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
   const [searchInput, setSearchInput] = useState("");
-  // ? does debounced search depends on search input
+  // Debounced search input value
   const debouncedSearch = useDebounce(searchInput, 500);
 
   useEffect(() => {

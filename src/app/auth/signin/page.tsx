@@ -8,16 +8,17 @@ import { useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { useEffect, useRef,useState } from "react";
 
-import Authenticated from "@/app/components/home/Authenticated";
-import AuthenticationProcessor from "@/app/components/home/AuthenticationProcessor";
-import ErrorComponent from "@/app/components/home/ErrorComponent";
-import Loader from "@/app/components/home/Loader";
+
+import ErrorComponent from "@/app/components/home/error/ErrorComponent";
+import Loader from "@/app/components/home/loader/Loader";
 
 import handleOAuthCallback from "@/app/utils/auth/handleOAuthCallback";
 
 import { css } from "../../../../styled-system/css";
-import SignInText from "@/app/components/home/sign-in/SignInText";
-import SignInButton from "@/app/components/home/sign-in/SignInButton";
+import SignInText from "@/app/components/home/signin/SignInText";
+import SignInButton from "@/app/components/home/signin/SignInButton";
+import Authenticated from "@/app/components/home/auth/Authenticated";
+import AuthenticationProcessor from "@/app/components/home/auth/AuthenticationProcessor";
 
 export default function SignInPage() {
   const { data: session, status } = useSession(); // useSession returns a session object on client side

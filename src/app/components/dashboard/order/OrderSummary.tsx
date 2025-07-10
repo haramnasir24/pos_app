@@ -1,24 +1,34 @@
-import { OrderDiscount, OrderTax } from "@/app/types/order";
-import {
-  calculateOrderData,
-  createOrderData,
-} from "@/app/utils/cart/cartDrawerUtils";
+import { calculateOrderData } from "@/app/utils/cart/cartDrawerUtils";
 import { useEffect, useState } from "react";
 import { css } from "~/styled-system/css/css.mjs";
 import { OrderConfirmation } from "./OrderConfirmation";
-import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/app/constant/order_discounts_taxes";
+import {
+  ORDER_LEVEL_DISCOUNTS,
+  ORDER_LEVEL_TAXES,
+} from "@/app/constant/order_discounts_taxes";
 
+/**
+ * Props for the OrderSummary component.
+ * @property items - Array of cart items to summarize
+ * @property accessToken - Auth token for API requests
+ * @property onGoBack - Callback to return to previous view
+ * @property clearCart - Callback to clear the cart after order
+ * @property setShowCheckout - Controls checkout modal visibility
+ * @property setOpen - Controls drawer open/close state
+ */
 type OrderSummaryProps = {
   items: any[];
   accessToken: string;
   onGoBack: () => void;
   clearCart: () => void;
   setShowCheckout: (open: boolean) => void;
-  setOpen: (open: boolean) => void; // <-- add this
+  setOpen: (open: boolean) => void;
 };
 
-
-
+/**
+ * Displays a summary of the current order, including items, discounts, taxes, and totals.
+ * Handles order calculation, error/loading states, and order confirmation.
+ */
 export const OrderSummary = ({
   items,
   accessToken,
@@ -32,12 +42,18 @@ export const OrderSummary = ({
   const [error, setError] = useState<string | null>(null);
   const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // * calls the order confirmation
+  /**
+   * Shows the order confirmation dialog.
+   */
   const handlePlaceOrder = () => {
     setShowConfirmation(true);
   };
 
   useEffect(() => {
+    /**
+     * Calculates the order preview by calling the backend API.
+     * Handles loading and error states.
+     */
     const calculateOrder = async () => {
       try {
         setIsLoading(true);
@@ -83,18 +99,32 @@ export const OrderSummary = ({
   // * retrieving order data from the orders api response
   console.log(orderPreview);
 
-  // * format cents to dollars
+  /**
+   * Formats a cent value as a dollar string.
+   * @param amount - Amount in cents
+   * @returns Formatted string in dollars
+   */
   const formatMoney = (amount: number | undefined) =>
     typeof amount === "number" ? `$${(amount / 100).toFixed(2)}` : "N/A";
 
-  // *  get tax/discount names by uid
+  /**
+   * Gets the tax name by UID from the order preview.
+   * @param uid - Tax UID
+   * @returns Tax name or fallback
+   */
   const getTaxName = (uid: string) =>
     orderPreview?.order?.taxes?.find((t: any) => t.uid === uid)?.name || "Tax";
+  /**
+   * Gets the discount name by UID from the order preview.
+   * @param uid - Discount UID
+   * @returns Discount name or fallback
+   */
   const getDiscountName = (uid: string) =>
     orderPreview?.order?.discounts?.find((d: any) => d.uid === uid)?.name ||
     "Discount";
 
   if (isLoading) {
+    // * Loading state UI
     return (
       <div
         className={css({
@@ -124,6 +154,7 @@ export const OrderSummary = ({
   }
 
   if (error) {
+    // * Error state UI
     return (
       <div
         className={css({
@@ -151,6 +182,7 @@ export const OrderSummary = ({
   }
 
   if (showConfirmation) {
+    // * Show order confirmation dialog
     return (
       <OrderConfirmation
         items={items}
@@ -184,7 +216,7 @@ export const OrderSummary = ({
           maxH: "90vh",
           overflowY: "auto",
           minWidth: "350px",
-          mt: "4",
+          mt: "2",
         })}
       >
         <button
@@ -198,9 +230,9 @@ export const OrderSummary = ({
             borderRadius: "md",
             px: "3",
             py: "1",
-            fontWeight: "bold",
+            fontWeight: "semibold",
             _hover: { bg: "gray.300" },
-            mb: "4",
+            mb: "6",
           })}
         >
           ← Go Back
@@ -212,12 +244,12 @@ export const OrderSummary = ({
               fontSize: "lg",
               fontWeight: "bold",
               mb: "6",
-              mt: "6",
+              mt: "8",
               color: "gray.800",
               letterSpacing: "tight",
             })}
           >
-            🧾 Order Summary
+            Order Summary
           </h3>
 
           {/* Items List with old/new values, applied discounts/taxes */}
@@ -337,12 +369,6 @@ export const OrderSummary = ({
             </div>
           </div>
         </div>
-
-        {orderPreview?.order?.id && (
-          <p className={css({ color: "gray.500", fontSize: "sm", mb: "4" })}>
-            Order ID: {orderPreview.order.id}
-          </p>
-        )}
 
         <button
           onClick={handlePlaceOrder}

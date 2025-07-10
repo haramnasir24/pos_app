@@ -1,21 +1,17 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState } from "react";
 
-import Authenticated from "./components/home/Authenticated";
-import ErrorComponent from "./components/home/ErrorComponent";
-import Loader from "./components/home/Loader";
 
+import Loader from "./components/home/loader/Loader";
 
 import { css } from "~/styled-system/css";
-import SignInText from "./components/home/sign-in/SignInText";
-import SignInButton from "./components/home/sign-in/SignInButton";
+import SignInText from "./components/home/signin/SignInText";
+import SignInButton from "./components/home/signin/SignInButton";
+import Authenticated from "./components/home/auth/Authenticated";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
-  // const [isProcessing, setIsProcessing] = useState(false);
-  const [error, setError] = useState<string | null>(null);
 
   if (status === "loading") {
     return <Loader />;
@@ -24,10 +20,6 @@ export default function HomePage() {
   if (session) {
     return <Authenticated session={session} />;
   }
-
-  // if (isProcessing) {
-  //   return <AuthenticationProcessor />
-  // }
 
   return (
     <main>

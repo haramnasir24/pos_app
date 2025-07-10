@@ -1,8 +1,9 @@
 import { Session } from "next-auth";
+import { css } from "~/styled-system/css";
+import { HomeSignOutButton } from "../signout/HomeSignOutButton";
+import { flex } from "~/styled-system/patterns";
 
-import { HomeSignOutButton } from "./HomeSignOutButton";
-import { css } from "../../../../styled-system/css";
-import { flex } from "../../../../styled-system/patterns";
+
 
 type sessionProps = {
   session: Session;

@@ -2,12 +2,20 @@
 
 import { useState } from "react";
 import { css } from "~/styled-system/css";
-import { 
-  CategoryObj, 
-  toggleCategory, 
-  isCategorySelected, 
-  clearSelectedCategories 
+import {
+  CategoryObj,
+  toggleCategory,
+  isCategorySelected,
+  clearSelectedCategories,
 } from "@/app/utils/filter/filterUtils";
+
+/**
+ * Props for the FilterDrawer component.
+ * @property {boolean} open - Whether the drawer is open.
+ * @property {() => void} onClose - Function to close the drawer.
+ * @property {(selectedCategories: CategoryObj[]) => void} onApply - Function to apply selected categories.
+ * @property {CategoryObj[]} categoryObjects - List of available category objects.
+ */
 
 interface FilterDrawerProps {
   open: boolean;
@@ -16,6 +24,10 @@ interface FilterDrawerProps {
   categoryObjects: CategoryObj[];
 }
 
+/**
+ * Drawer component for filtering items by category.
+ * Allows users to select categories, apply or clear filters.
+ */
 export default function FilterDrawer({
   open,
   onClose,
@@ -24,21 +36,25 @@ export default function FilterDrawer({
 }: FilterDrawerProps) {
   const [selected, setSelected] = useState<CategoryObj[]>([]);
 
-
-  // * util functions for filter
-
-  // * adds or removes a category object from the selected list
+  /**
+   * Toggles a category in the selected list.
+   * @param {CategoryObj} category - The category to toggle.
+   */
   const handleToggle = (category: CategoryObj) => {
     setSelected((prev) => toggleCategory(category, prev));
   };
 
-  // * passes the selected category objects and then closes the drawer
+  /**
+   * Applies the selected categories and closes the drawer.
+   */
   const handleApply = () => {
     onApply(selected);
     onClose();
   };
 
-  // * clears the filter
+  /**
+   * Clears all selected categories, applies no filter, and closes the drawer.
+   */
   const handleClear = () => {
     setSelected(clearSelectedCategories());
     onApply([]); // * call the API with no filter query

@@ -2,22 +2,27 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import DashboardHeader from "../components/dashboard/DashboardHeader";
 import ProductSection from "../components/dashboard/products/ProductSection";
 import { css } from "../../../styled-system/css";
 import { center, container, stack } from "../../../styled-system/patterns";
 import { Suspense } from "react";
 import ProductSectionSkeleton from "../components/dashboard/products/ProductSectionSkeleton";
+import DashboardHeader from "../components/dashboard/header/DashboardHeader";
 
+/**
+ * Dashboard page for authenticated users.
+ * Fetches products and inventory server-side, and renders the product section.
+ * Redirects to home if not authenticated.
+ */
 export default async function DashboardPage() {
-  // * check the session
+  // * Check the session
   const session = await getServerSession(authOptions);
   
   if (!session) {
     redirect("/");
   }
 
-  // * fetching products server side
+  // * Fetch products server side
   let products = null;
   try {
     const response = await fetch(
@@ -50,6 +55,9 @@ export default async function DashboardPage() {
     // fail silently, fallback to client fetch
   }
 
+  /**
+   * Extract item and variation IDs from products.
+   */
   const items =
     products.objects?.filter((obj: any) => obj.type === "ITEM") || [];
 
@@ -57,8 +65,7 @@ export default async function DashboardPage() {
     (item: any) => item.item_data?.variations?.map((v: any) => v.id) ?? []
   );
 
-
-  // * fetching inventory server side
+  // * Fetch inventory server side
   let inventoryData = null;
   try {
     const response = await fetch(

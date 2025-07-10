@@ -5,43 +5,36 @@ import FilterDrawer from "./FilterDrawer";
 import { useState } from "react";
 import { css } from "~/styled-system/css";
 import categoryObjects from "@/app/constant/categories.json";
+import { buildCategoryFilterParams } from "@/app/utils/filter/filterUtils";
 
+/**
+ * Represents a category object with id and name.
+ */
 type CategoryObj = { id: string; name: string };
 
+/**
+ * Props for the FilterButton component.
+ */
 type FilterButtonProps = {
-  // categoryObjects: CategoryObj[];
   setParams: (params: Record<string, any>) => void;
   prevParams: Record<string, any>;
 };
+
+/**
+ * Button component to open the filter drawer and apply category filters.
+ */
 export default function FilterButton({
-  // categoryObjects,
   setParams,
   prevParams,
 }: FilterButtonProps) {
   const [open, setOpen] = useState(false);
 
-  // * function that applies the filter
+  /**
+   * Applies the selected categories as filters using the utility function.
+   * @param {CategoryObj[]} selected - Selected categories.
+   */
   const onApply = (selected: CategoryObj[]) => {
-    if (selected && selected.length > 0) {
-      setParams({
-        ...prevParams,
-        query: {
-          ...prevParams.query,
-          set_query: {
-            attribute_values: selected.map((category) => category.id),
-            attribute_name: "categories",
-          },
-        },
-      });
-    } else {
-      setParams({
-        types: "item, image, category, tax, discount, pricing_rule, product_set",
-        query: {
-          ...prevParams.query,
-          set_query: undefined,
-        },
-      });
-    }
+    setParams(buildCategoryFilterParams(selected, prevParams));
   };
 
   return (
