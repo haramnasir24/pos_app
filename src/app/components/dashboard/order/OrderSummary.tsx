@@ -6,6 +6,7 @@ import {
 import { useEffect, useState } from "react";
 import { css } from "~/styled-system/css/css.mjs";
 import { OrderConfirmation } from "./OrderConfirmation";
+import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/app/constant/order_discounts_taxes";
 
 type OrderSummaryProps = {
   items: any[];
@@ -16,23 +17,7 @@ type OrderSummaryProps = {
   setOpen: (open: boolean) => void; // <-- add this
 };
 
-const ORDER_LEVEL_DISCOUNTS: OrderDiscount[] = [
-  {
-    type: "FIXED_PERCENTAGE",
-    name: "10% Off On Entire Order",
-    percentage: "10",
-    scope: "ORDER",
-  },
-];
 
-const ORDER_LEVEL_TAXES: OrderTax[] = [
-  {
-    type: "ADDITIVE",
-    name: "Trade Tax On Entire Order",
-    percentage: "11",
-    scope: "ORDER",
-  },
-];
 
 export const OrderSummary = ({
   items,

@@ -1,4 +1,6 @@
-export const ORDER_LEVEL_DISCOUNTS = [
+import { OrderDiscount, OrderTax } from "../types/order";
+
+export const ORDER_LEVEL_DISCOUNTS: OrderDiscount[] = [
   {
     type: "FIXED_PERCENTAGE",
     name: "10% Off On Entire Order",
@@ -7,7 +9,7 @@ export const ORDER_LEVEL_DISCOUNTS = [
   },
 ];
 
-export const ORDER_LEVEL_TAXES = [
+export const ORDER_LEVEL_TAXES: OrderTax[] = [
   {
     type: "ADDITIVE",
     name: "Trade Tax On Entire Order",
