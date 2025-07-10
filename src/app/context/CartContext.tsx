@@ -19,7 +19,6 @@ export type CartItem = {
   taxes?: Array<{ name: string; percentage: string | number | null }>;
 };
 
-// ? check this
 export type Discount = {
   discount_name: string;
   discount_value: string | number | null;
@@ -40,19 +39,16 @@ export type OrderSummary = {
 };
 
 export type Cart = {
-  // * this is used to look up cart items using their ids
-  // * an object of key of string type and value of cartItem type
+  // * this is an object of key of string type and value of cartItem type
+  // * used to look up cart items using their ids
   [id: string]: CartItem;
 };
 
 // * this defines the shape of the cartContext object
-// * cart is the current cart state
-// * addToCart function to add an item (without specifying quantity, which defaults to 1)
-// * using typescript utiliy type Omit
 interface CartContextType {
-  cart: Cart;
+  cart: Cart; // * cart is the current cart state
   // * cart methods
-  addToCart: (item: Omit<CartItem, "quantity">) => void;
+  addToCart: (item: Omit<CartItem, "quantity">) => void; // * addToCart function to add an item (without specifying quantity, which defaults to 1)
   removeFromCart: (id: string) => void;
   updateQuantity: (id: string, quantity: number) => void;
   // * discount and tax methods
@@ -66,7 +62,7 @@ interface CartContextType {
   clearCart: () => void;
 }
 
-// * context is initialised here
+// * cart context is initialised here
 export const CartContext = createContext<CartContextType>({
   cart: {},
   addToCart: () => {},
@@ -111,9 +107,9 @@ export function CartContextProvider({
         [item.id]: { ...item, quantity: 1 },
       };
     });
-
   }, []);
 
+  // * remove item from cart
   const removeFromCart = useCallback((id: string) => {
     setCart((prev) => {
       const newCart = { ...prev };
@@ -122,6 +118,7 @@ export function CartContextProvider({
     });
   }, []);
 
+  // * updated the quantity of cart item
   const updateQuantity = useCallback((id: string, quantity: number) => {
     setCart((prev) => {
       if (!prev[id]) return prev;
@@ -166,7 +163,7 @@ export function CartContextProvider({
     });
   }, []);
 
-  // * Toggle tax for item
+  // * Toggle tax on/off for item
   const toggleItemTax = useCallback((itemId: string, enabled: boolean) => {
     setCart((prev) => {
       if (!prev[itemId]) return prev;
@@ -267,6 +264,7 @@ export function CartContextProvider({
     };
   }, [cart]);
 
+  // * clear cart items
   const clearCart = useCallback(() => {
     setCart({});
   }, []);

@@ -5,8 +5,11 @@ import { useContext, useState } from "react";
 import { CartContext, TaxRate } from "../../../context/CartContext";
 import { css, cx } from "../../../../../styled-system/css";
 import Image from "next/image";
-import { OrderConfirmation } from "../order/OrderConfirmation";
-
+import { OrderSummary } from "../order/OrderSummary";
+import {
+  ORDER_LEVEL_DISCOUNTS,
+  ORDER_LEVEL_TAXES,
+} from "@/app/constant/order_discounts_taxes";
 
 type CartDrawerProps = {
   accessToken?: string;
@@ -36,6 +39,8 @@ export default function CartDrawer({
     setItemTaxRate,
   } = useContext(CartContext);
 
+  const items = Object.values(cart); // * returns an array of all items present in cart at the moment
+
   const [open, setOpen] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
 
@@ -49,15 +54,80 @@ export default function CartDrawer({
     Record<string, SelectedTax>
   >({});
 
-  const [showAddedMessage, setShowAddedMessage] = useState(false);
+  // * store selected order-level discount/tax
+  const [selectedOrderDiscount, setSelectedOrderDiscount] = useState<any>(null);
+  const [selectedOrderTax, setSelectedOrderTax] = useState<any>(null);
 
-  const items = Object.values(cart); // * returns an array of all items in cart at the moment
-  const orderSummary = getOrderSummary();
+  // * exclusivity logic: if order-level is selected, disable item-level, and vice versa
+  const isOrderLevelActive = !!selectedOrderDiscount || !!selectedOrderTax;
+  const isItemLevelActive = items.some(
+    (item) =>
+      item.itemDiscount || (item.is_taxable && item.itemTaxRate !== undefined)
+  );
 
-  // * utility functions for cart
+  // ? utility functions for cart drawer (add them in util folder)
+  // * clear item-level discounts/taxes if order-level is selected
+  const handleOrderLevelChange = (type: "discount" | "tax", value: any) => {
+    if (type === "discount") {
+      setSelectedOrderDiscount(value);
+      // setSelectedOrderTax(null); // only one can be active
+    } else {
+      setSelectedOrderTax(value);
+      // setSelectedOrderDiscount(null); // only one can be active
+    }
+    // clear all item-level discounts/taxes
+    items.forEach((item) => {
+      removeItemDiscount(item.id);
+      toggleItemTax(item.id, false);
+      // Only call setItemTaxRate if item.itemTaxRate is a number
+      if (typeof item.itemTaxRate === "number") {
+        setItemTaxRate(item.id, 0); // set to 0 to clear
+      }
+    });
+  };
+
+  // * clear order-level if any item-level is selected
+  const handleItemLevelChange = () => {
+    setSelectedOrderDiscount(null);
+    setSelectedOrderTax(null);
+  };
+
+  // * calculate order summary with order-level discount/tax if selected
+  const getDrawerOrderSummary = () => {
+    if (isOrderLevelActive) {
+      // Uniformly distribute order-level discount/tax
+      let subtotal = items.reduce(
+        (sum, item) => sum + (item.price ?? 0) * item.quantity,
+        0
+      );
+      let discountAmount = 0;
+      let taxAmount = 0;
+      if (selectedOrderDiscount) {
+        const percent = parseFloat(selectedOrderDiscount.percentage);
+        if (!isNaN(percent)) {
+          discountAmount = (subtotal * percent) / 100;
+        }
+      }
+      const discountedSubtotal = subtotal - discountAmount;
+      if (selectedOrderTax) {
+        const percent = parseFloat(selectedOrderTax.percentage);
+        if (!isNaN(percent)) {
+          taxAmount = (discountedSubtotal * percent) / 100;
+        }
+      }
+      const total = discountedSubtotal + taxAmount;
+      return { subtotal, discountAmount, taxAmount, total };
+    } else {
+      // fallback to context's item-level summary
+      return getOrderSummary();
+    }
+  };
+
+  const drawerOrderSummary = getDrawerOrderSummary();
 
   // * handle discount toggle
   const handleDiscountToggle = (item: any, checked: boolean) => {
+    handleItemLevelChange();
     if (checked && selectedDiscounts[item.id]) {
       applyItemDiscount(item.id, selectedDiscounts[item.id]);
     } else {
@@ -71,14 +141,11 @@ export default function CartDrawer({
       ...prev,
       [item.id]: discount,
     }));
-    // If already checked, apply immediately
-    if (discount && item.itemDiscount) {
-      applyItemDiscount(item.id, discount);
-    }
   };
 
   // * handle tax toggle
   const handleTaxToggle = (item: any, checked: boolean) => {
+    handleItemLevelChange();
     toggleItemTax(item.id, checked);
   };
 
@@ -207,7 +274,7 @@ export default function CartDrawer({
                         <div className={css({ flex: 1 })}>
                           <div
                             className={css({
-                              fontSize: "sm",
+                              fontSize: "xs",
                               fontWeight: "medium",
                             })}
                           >
@@ -410,13 +477,152 @@ export default function CartDrawer({
                 pt: "4",
                 borderTop: "1px solid",
                 borderColor: "gray.200",
+                display: "flex",
+                flexDirection: "column",
+                gap: "2",
               })}
             >
+              {/* Order-level discount/tax controls */}
+              <div
+                className={css({
+                  mb: "2",
+                  display: "flex",
+                  flexDir: "column",
+                  gap: "2",
+                })}
+              >
+                <label
+                  className={css({
+                    fontSize: "sm",
+                    fontWeight: "bold",
+                    mr: "2",
+                  })}
+                >
+                  Order Discount:
+                </label>
+                <select
+                  value={selectedOrderDiscount?.name || ""}
+                  onChange={(e) => {
+                    const discount =
+                      ORDER_LEVEL_DISCOUNTS.find(
+                        (d) => d.name === e.target.value
+                      ) || null;
+                    handleOrderLevelChange("discount", discount);
+                  }}
+                  disabled={isItemLevelActive}
+                  className={css({
+                    fontSize: "xs",
+                    px: "2",
+                    py: "1",
+                    border: "1px solid",
+                    borderColor: "gray.300",
+                    borderRadius: "md",
+                    mr: "2",
+                  })}
+                >
+                  <option value="">Select Discount</option>
+                  {ORDER_LEVEL_DISCOUNTS.map((discount, idx) => (
+                    <option key={idx} value={discount.name}>
+                      {discount.name} ({discount.percentage}%)
+                    </option>
+                  ))}
+                </select>
+                <label
+                  className={css({
+                    fontSize: "sm",
+                    fontWeight: "bold",
+                    mr: "2",
+                  })}
+                >
+                  Order Tax:
+                </label>
+                <select
+                  value={selectedOrderTax?.name || ""}
+                  onChange={(e) => {
+                    const tax =
+                      ORDER_LEVEL_TAXES.find(
+                        (t) => t.name === e.target.value
+                      ) || null;
+                    handleOrderLevelChange("tax", tax);
+                  }}
+                  disabled={isItemLevelActive}
+                  className={css({
+                    fontSize: "xs",
+                    px: "2",
+                    py: "1",
+                    border: "1px solid",
+                    borderColor: "gray.300",
+                    borderRadius: "md",
+                  })}
+                >
+                  <option value="">Select Tax</option>
+                  {ORDER_LEVEL_TAXES.map((tax, idx) => (
+                    <option key={idx} value={tax.name}>
+                      {tax.name} ({tax.percentage}%)
+                    </option>
+                  ))}
+                </select>
+                {isItemLevelActive && (
+                  <span
+                    className={css({
+                      color: "red.500",
+                      fontSize: "xs",
+                      ml: "2",
+                    })}
+                  >
+                    (Disable item-level discounts/taxes to use order-level)
+                  </span>
+                )}
+              </div>
+              {/* Show order-level discount/tax if active */}
+              {isOrderLevelActive && (
+                <div
+                  className={css({
+                    fontSize: "sm",
+                    color: "gray.700",
+                    mb: "2",
+                  })}
+                >
+                  {selectedOrderDiscount && (
+                    <div>
+                      <b>Order Discount:</b> {selectedOrderDiscount.name} (-
+                      {selectedOrderDiscount.percentage}%)
+                    </div>
+                  )}
+                  {selectedOrderTax && (
+                    <div>
+                      <b>Order Tax:</b> {selectedOrderTax.name} (+
+                      {selectedOrderTax.percentage}%)
+                    </div>
+                  )}
+                </div>
+              )}
+              {/* Total display (uses drawerOrderSummary) */}
               <div
                 className={css({ fontWeight: "bold", fontSize: "lg", mb: "2" })}
               >
-                Total: ${(orderSummary.total / 100).toFixed(2)}
+                Total: ${(drawerOrderSummary.total / 100).toFixed(2)}
               </div>
+              <button
+                className={css({
+                  w: "full",
+                  bg: "red.500",
+                  color: "white",
+                  py: "2",
+                  borderRadius: "md",
+                  fontWeight: "bold",
+                  fontSize: "sm",
+                  _hover: { bg: "red.600" },
+                })}
+                disabled={items.length === 0}
+                onClick={() => {
+                  clearCart();
+                  setShowCheckout(false);
+                  setOpen(false);
+                }}
+              >
+                Clear Cart
+              </button>
               <button
                 className={css({
                   w: "full",
@@ -436,16 +642,13 @@ export default function CartDrawer({
             </div>
           </>
         ) : (
-          // TODO: take to the page where order is placed and all the orders api response is shown
-          // this is temporary, add order summary here
-          <OrderConfirmation
+          <OrderSummary
             items={items}
             accessToken={accessToken || ""}
-            onClose={() => {
-              setShowCheckout(false);
-              setOpen(false);
-              clearCart();
-            }}
+            onGoBack={() => setShowCheckout(false)}
+            clearCart={clearCart}
+            setShowCheckout={setShowCheckout}
+            setOpen={setOpen}
           />
         )}
       </div>
