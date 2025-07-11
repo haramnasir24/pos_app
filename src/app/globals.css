@@ -1,1 +1,32 @@
 @layer reset, base, tokens, recipes, utilities;
+
+/* Custom Select Animations */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.2s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.2s ease-out;
+}

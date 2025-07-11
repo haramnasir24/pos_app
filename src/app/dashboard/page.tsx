@@ -93,14 +93,14 @@ export default async function DashboardPage() {
     <div className={css({ minH: "100vh", bg: "gray.50" })}>
       <DashboardHeader />
 
-      <main className={css({ py: "12" })}>
+      <main className={css({ py: ["6", "8", "12"] })}>
         <div className={container({ maxW: "7xl" })}>
           <div className={center({ maxW: "6xl", mx: "auto" })}>
-            <div className={stack({ gap: "8" })}>
+            <div className={stack({ gap: ["4", "6", "8"] })}>
               <div className={css({ textAlign: "center" })}>
                 <h2
                   className={css({
-                    fontSize: "3xl",
+                    fontSize: ["lg", "2xl", "3xl"],
                     fontWeight: "bold",
                     color: "gray.900",
                     mb: "4",
@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                 </h2>
                 <p
                   className={css({
-                    fontSize: "lg",
+                    fontSize: ["sm", "md", "lg"],
                     color: "gray.600",
                     maxW: "1xl",
                     mx: "auto",

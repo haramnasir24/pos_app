@@ -24,8 +24,8 @@ export default function DashboardHeader() {
         >
           <h1
             className={css({
-              fontSize: "2xl",
-              fontWeight: "bold",
+              fontSize: ["lg", "xl", "2xl"],
+              fontWeight: ["semibold", "bold", "bold"],
               color: "gray.900",
               bgGradient: "to-r",
               gradientFrom: "blue.600",

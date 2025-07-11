@@ -6,10 +6,12 @@ import { CartContext, TaxRate } from "../../../context/CartContext";
 import { css, cx } from "../../../../../styled-system/css";
 import Image from "next/image";
 import { OrderSummary } from "../order/OrderSummary";
+import CustomSelect from "../../ui/CustomSelect";
 import {
   ORDER_LEVEL_DISCOUNTS,
   ORDER_LEVEL_TAXES,
 } from "@/app/constant/order_discounts_taxes";
+import CartItemCard from "./CartItemCard";
 
 /**
  * Props for the CartDrawer component.
@@ -278,238 +280,30 @@ export default function CartDrawer({
                   const inventory = cartInventoryInfo[item.id];
                   const state = inventory?.state ?? "Unknown";
                   const quantity = inventory?.quantity ?? "-";
-                  // * get the disconts and taxes for each item
                   const discounts = item.discounts || [];
                   const taxes = item.taxes || [];
-
-                  //* inventory management
                   const inventoryQty =
                     typeof quantity === "string"
                       ? parseInt(quantity, 10)
                       : quantity ?? 0;
                   const atMaxQty = item.quantity >= inventoryQty;
-
                   return (
-                    <div
-                      key={idx}
-                      className={css({
-                        py: "2",
-                        px: "3",
-                        bg: "gray.50",
-                        borderRadius: "md",
-                        mb: "4",
-                      })}
-                    >
-                      <div
-                        key={item.id}
-                        className={css({
-                          display: "flex",
-                          alignItems: "center",
-                          mb: "2",
-                        })}
-                      >
-                        <Image
-                          src={item.imageUrl}
-                          alt={item.name}
-                          width={48}
-                          height={48}
-                          className={css({ borderRadius: "md", mr: "3" })}
-                        />
-                        <div className={css({ flex: 1 })}>
-                          <div
-                            className={css({
-                              fontSize: "xs",
-                              fontWeight: "medium",
-                            })}
-                          >
-                            {item.name}
-                          </div>
-                          <div
-                            className={css({
-                              color: "gray.600",
-                              fontSize: "xs",
-                            })}
-                          >
-                            $
-                            {item.price ? (item.price / 100).toFixed(2) : "N/A"}
-                          </div>
-                        </div>
-                        <div
-                          className={css({
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "1",
-                          })}
-                        >
-                          <button
-                            className={css({
-                              px: "2",
-                              py: "1",
-                              bg: "gray.200",
-                              borderRadius: "md",
-                            })}
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity - 1)
-                            }
-                            disabled={item.quantity <= 1}
-                          >
-                            -
-                          </button>
-                          <span className={css({ px: "2" })}>
-                            {item.quantity}
-                          </span>
-                          <button
-                            className={css({
-                              px: "2",
-                              py: "1",
-                              bg: atMaxQty ? "gray.100" : "gray.200",
-                              borderRadius: "md",
-                              color: atMaxQty ? "gray.400" : undefined,
-                              cursor: atMaxQty ? "not-allowed" : undefined,
-                            })}
-                            onClick={() =>
-                              updateQuantity(item.id, item.quantity + 1)
-                            }
-                            disabled={atMaxQty}
-                          >
-                            +
-                          </button>
-                          <button
-                            className={css({
-                              ml: "2",
-                              color: "red.500",
-                              fontSize: "sm",
-                            })}
-                            onClick={() => removeFromCart(item.id)}
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Item-level tax toggle */}
-                      {taxes.length > 0 && (
-                        <div
-                          className={css({
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "2",
-                            mb: "4",
-                            mt: "4",
-                          })}
-                        >
-                          <label
-                            className={css({
-                              fontSize: "xs",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "1",
-                            })}
-                          >
-                            <input
-                              className={css({ mr: "1" })}
-                              type="checkbox"
-                              checked={
-                                !!item.is_taxable &&
-                                item.itemTaxRate !== undefined
-                              }
-                              disabled={!selectedTaxes[item.id]}
-                              onChange={(e) =>
-                                handleTaxToggle(item, e.target.checked)
-                              }
-                            />
-                            Apply Tax
-                          </label>
-                          <select
-                            value={item.itemTaxRate ?? ""}
-                            onChange={(e) =>
-                              handleTaxSelect(item, e.target.value)
-                            }
-                            className={css({
-                              fontSize: "xs",
-                              px: "2",
-                              py: "1",
-                              border: "1px solid",
-                              borderColor: "gray.300",
-                              borderRadius: "md",
-                            })}
-                          >
-                            <option value="">Select Tax</option>
-                            {taxes.map((tax, idx) => (
-                              <option
-                                key={idx}
-                                value={
-                                  tax.percentage !== null
-                                    ? Number(tax.percentage)
-                                    : ""
-                                }
-                              >
-                                {tax.name} ({tax.percentage}%)
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-
-                      {/* Item level discount display */}
-                      {discounts.length > 0 && (
-                        <div
-                          className={css({
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "2",
-                            mb: "4",
-                          })}
-                        >
-                          <label
-                            className={css({
-                              fontSize: "xs",
-                              display: "flex",
-                              alignItems: "center",
-                              gap: "1",
-                            })}
-                          >
-                            <input
-                              className={css({ mr: "1" })}
-                              type="checkbox"
-                              checked={!!item.itemDiscount}
-                              disabled={!selectedDiscounts[item.id]}
-                              onChange={(e) =>
-                                handleDiscountToggle(item, e.target.checked)
-                              }
-                            />
-                            Apply Discount
-                          </label>
-                          <select
-                            value={
-                              selectedDiscounts[item.id]?.discount_name || ""
-                            }
-                            onChange={(e) => {
-                              const discount = discounts.find(
-                                (d) => d.discount_name === e.target.value
-                              );
-                              handleDiscountSelect(item, discount);
-                            }}
-                            className={css({
-                              fontSize: "xs",
-                              px: "2",
-                              py: "1",
-                              border: "1px solid",
-                              borderColor: "gray.300",
-                              borderRadius: "md",
-                            })}
-                          >
-                            <option value="">Select Discount</option>
-                            {discounts.map((discount, idx) => (
-                              <option key={idx} value={discount.discount_name}>
-                                {discount.discount_name} (
-                                {discount.discount_value})
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-                      )}
-                    </div>
+                    <CartItemCard
+                      key={item.id}
+                      item={item}
+                      inventory={inventory}
+                      atMaxQty={atMaxQty}
+                      selectedDiscount={selectedDiscounts[item.id]}
+                      selectedTax={selectedTaxes[item.id]}
+                      discounts={discounts}
+                      taxes={taxes}
+                      onQtyChange={(qty) => updateQuantity(item.id, qty)}
+                      onRemove={() => removeFromCart(item.id)}
+                      onDiscountToggle={(checked) => handleDiscountToggle(item, checked)}
+                      onDiscountSelect={(discount) => handleDiscountSelect(item, discount)}
+                      onTaxToggle={(checked) => handleTaxToggle(item, checked)}
+                      onTaxSelect={(value) => handleTaxSelect(item, value)}
+                    />
                   );
                 })}
               </div>
@@ -519,133 +313,99 @@ export default function CartDrawer({
               className={css({
                 mt: "auto",
                 pt: "4",
-                borderTop: "1px solid",
-                borderColor: "gray.200",
+                borderTop: "none",
                 display: "flex",
                 flexDirection: "column",
                 gap: "2",
               })}
             >
-              {/* Order-level discount/tax controls */}
               <div
                 className={css({
+                  bg: "white",
+                  boxShadow: "sm",
+                  borderRadius: "lg",
+                  p: "4",
                   mb: "2",
                   display: "flex",
-                  flexDir: "column",
+                  flexDirection: "column",
                   gap: "2",
                 })}
               >
+                {/* Order-level discount/tax controls */}
                 <label
-                  className={css({
-                    fontSize: "sm",
-                    fontWeight: "bold",
-                    mr: "2",
-                  })}
+                  className={css({ fontSize: "sm", fontWeight: "bold", mr: "2" })}
                 >
                   Order Discount:
                 </label>
-                <select
+                <CustomSelect
                   value={selectedOrderDiscount?.name || ""}
-                  onChange={(e) => {
+                  onChange={(value) => {
                     const discount =
-                      ORDER_LEVEL_DISCOUNTS.find(
-                        (d) => d.name === e.target.value
-                      ) || null;
+                      ORDER_LEVEL_DISCOUNTS.find((d) => d.name === value) || null;
                     handleOrderLevelChange("discount", discount);
                   }}
                   disabled={isItemLevelActive}
-                  className={css({
-                    fontSize: "xs",
-                    px: "2",
-                    py: "1",
-                    border: "1px solid",
-                    borderColor: "gray.300",
-                    borderRadius: "md",
-                    mr: "2",
-                  })}
-                >
-                  <option value="">Select Discount</option>
-                  {ORDER_LEVEL_DISCOUNTS.map((discount, idx) => (
-                    <option key={idx} value={discount.name}>
-                      {discount.name} ({discount.percentage}%)
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: "", label: "Select Discount" },
+                    ...ORDER_LEVEL_DISCOUNTS.map((discount) => ({
+                      value: discount.name,
+                      label: `${discount.name} (${discount.percentage}%)`,
+                    })),
+                  ]}
+                  placeholder="Select Discount"
+                  size="sm"
+                  className={css({ mr: "2" })}
+                />
                 <label
-                  className={css({
-                    fontSize: "sm",
-                    fontWeight: "bold",
-                    mr: "2",
-                  })}
+                  className={css({ fontSize: "sm", fontWeight: "bold", mr: "2" })}
                 >
                   Order Tax:
                 </label>
-                <select
+                <CustomSelect
                   value={selectedOrderTax?.name || ""}
-                  onChange={(e) => {
+                  onChange={(value) => {
                     const tax =
-                      ORDER_LEVEL_TAXES.find(
-                        (t) => t.name === e.target.value
-                      ) || null;
+                      ORDER_LEVEL_TAXES.find((t) => t.name === value) || null;
                     handleOrderLevelChange("tax", tax);
                   }}
                   disabled={isItemLevelActive}
-                  className={css({
-                    fontSize: "xs",
-                    px: "2",
-                    py: "1",
-                    border: "1px solid",
-                    borderColor: "gray.300",
-                    borderRadius: "md",
-                  })}
-                >
-                  <option value="">Select Tax</option>
-                  {ORDER_LEVEL_TAXES.map((tax, idx) => (
-                    <option key={idx} value={tax.name}>
-                      {tax.name} ({tax.percentage}%)
-                    </option>
-                  ))}
-                </select>
+                  options={[
+                    { value: "", label: "Select Tax" },
+                    ...ORDER_LEVEL_TAXES.map((tax) => ({
+                      value: tax.name,
+                      label: `${tax.name} (${tax.percentage}%)`,
+                    })),
+                  ]}
+                  placeholder="Select Tax"
+                  size="sm"
+                />
                 {isItemLevelActive && (
                   <span
-                    className={css({
-                      color: "red.500",
-                      fontSize: "xs",
-                      ml: "2",
-                    })}
+                    className={css({ color: "red.500", fontSize: "xs", ml: "2" })}
                   >
                     (Disable item-level discounts/taxes to use order-level)
                   </span>
                 )}
-              </div>
-              {/* Show order-level discount/tax if active */}
-              {isOrderLevelActive && (
-                <div
-                  className={css({
-                    fontSize: "sm",
-                    color: "gray.700",
-                    mb: "2",
-                  })}
-                >
-                  {selectedOrderDiscount && (
-                    <div>
-                      <b>Order Discount:</b> {selectedOrderDiscount.name} (-
-                      {selectedOrderDiscount.percentage}%)
-                    </div>
-                  )}
-                  {selectedOrderTax && (
-                    <div>
-                      <b>Order Tax:</b> {selectedOrderTax.name} (+
-                      {selectedOrderTax.percentage}%)
-                    </div>
-                  )}
+                {/* Show order-level discount/tax if active */}
+                {isOrderLevelActive && (
+                  <div className={css({ fontSize: "xs", color: "gray.700", mb: "1" })}>
+                    {selectedOrderDiscount && (
+                      <div>
+                        <b>Order Discount:</b> {selectedOrderDiscount.name} (-
+                        {selectedOrderDiscount.percentage}%)
+                      </div>
+                    )}
+                    {selectedOrderTax && (
+                      <div>
+                        <b>Order Tax:</b> {selectedOrderTax.name} (+
+                        {selectedOrderTax.percentage}%)
+                      </div>
+                    )}
+                  </div>
+                )}
+                <div className={css({ fontWeight: "bold", fontSize: "lg", mb: "1" })}>
+                  Total: ${(drawerOrderSummary.total / 100).toFixed(2)}
                 </div>
-              )}
-              {/* Total display (uses drawerOrderSummary) */}
-              <div
-                className={css({ fontWeight: "bold", fontSize: "lg", mb: "2" })}
-              >
-                Total: ${(drawerOrderSummary.total / 100).toFixed(2)}
               </div>
               <button
                 className={css({
@@ -657,6 +417,7 @@ export default function CartDrawer({
                   fontWeight: "semibold",
                   fontSize: "sm",
                   _hover: { bg: "gray.300" },
+
                 })}
                 disabled={items.length === 0}
                 onClick={() => {
