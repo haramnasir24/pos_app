@@ -3,22 +3,22 @@
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "skipLibCheck": true,
+    "skipLibCheck": true, // Skip type checking of declaration files (.d.ts) for faster builds.
     "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "noEmit": true, // Dont output compiled JS files—just type-check (Next.js handles the build).
+    "esModuleInterop": true, // Allow default imports from modules with no default export.
+    "module": "esnext", // Use modern ES module syntax.
+    "moduleResolution": "bundler", // Use bundler-style module resolution (good for Next.js).
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true,
+    "incremental": true, // Enable faster incremental builds.
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "paths": {
+    "paths": { // path aliases
       "@/*": ["./src/*"],
       "~/*": ["./*"]
     }

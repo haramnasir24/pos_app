@@ -1,20 +1,18 @@
 "use client";
 
+import Authenticated from "@/components/home/auth/Authenticated";
+import SignInButton from "@/components/home/signin/SignInButton";
+import SignInText from "@/components/home/signin/SignInText";
+import Loader from "@/components/ui/Loader";
 import { useSession } from "next-auth/react";
 
-
-import Loader from "./components/home/loader/Loader";
-
 import { css } from "~/styled-system/css";
-import SignInText from "./components/home/signin/SignInText";
-import SignInButton from "./components/home/signin/SignInButton";
-import Authenticated from "./components/home/auth/Authenticated";
 
 export default function HomePage() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <Loader />;
+    return <Loader borderColor="border.home" />;
   }
 
   if (session) {
@@ -49,8 +47,6 @@ export default function HomePage() {
             })}
           >
             <SignInText />
-
-            {/* {error && <ErrorComponent error={error} />} */}
 
             <SignInButton />
 

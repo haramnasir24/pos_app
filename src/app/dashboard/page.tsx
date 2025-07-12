@@ -2,12 +2,13 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 
 import { authOptions } from "../api/auth/[...nextauth]/route";
-import ProductSection from "../components/dashboard/products/ProductSection";
+
 import { css } from "../../../styled-system/css";
 import { center, container, stack } from "../../../styled-system/patterns";
 import { Suspense } from "react";
-import ProductSectionSkeleton from "../components/dashboard/products/ProductSectionSkeleton";
-import DashboardHeader from "../components/dashboard/header/DashboardHeader";
+import DashboardHeader from "@/components/dashboard/header/DashboardHeader";
+import ProductSectionSkeleton from "@/components/dashboard/products/ProductSectionSkeleton";
+import ProductSection from "@/components/dashboard/products/ProductSection";
 
 /**
  * Dashboard page for authenticated users.
@@ -17,7 +18,7 @@ import DashboardHeader from "../components/dashboard/header/DashboardHeader";
 export default async function DashboardPage() {
   // * Check the session
   const session = await getServerSession(authOptions);
-  
+
   if (!session) {
     redirect("/");
   }

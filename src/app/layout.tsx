@@ -1,9 +1,8 @@
 import "./globals.css";
-// import * as React from "react";
 
-import { QueryProvider } from "./components/providers/QueryProvider";
-import { SessionProviders } from "./components/providers/SessionProvider";
-import { CartContextProvider } from "./context/CartContext";
+import { CartContextProvider } from "../context/CartContext";
+import { SessionProviders } from "@/components/providers/SessionProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 
 export default function RootLayout({
   children,
