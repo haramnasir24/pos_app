@@ -7,7 +7,8 @@ import SearchBar from "../search/SearchBar";
 import FilterButton from "../filter/FilterButton";
 import { useProductSectionData } from "../../../hooks/useProductSectionData";
 import { css } from "~/styled-system/css";
-import Loader from "@/components/ui/Loader";
+import Loader from "@/components/ui/HomeLoader";
+import DashboardLoader from "@/components/ui/DashboardLoader";
 
 /**
  * Props for the ProductSection component.
@@ -73,7 +74,7 @@ export default function ProductSection({
           prevParams={params}
         />
       </div>
-      {isPending && !products && <Loader borderColor="border.dashboard" />}
+      {isPending && !products && <DashboardLoader />}
       {error && <div>Error loading products</div>}
       {!isPending && !error && items.length === 0 && (
         <div style={{ textAlign: "center", margin: "2rem 0", color: "#888" }}>

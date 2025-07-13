@@ -4,7 +4,7 @@ import { FaFilter } from "react-icons/fa";
 import FilterDrawer from "./FilterDrawer";
 import { useState } from "react";
 import { css } from "~/styled-system/css";
-import categoryObjects from "@/constant/categories.json";
+import categoryObjects from "@/constants/categories.json";
 import { buildCategoryFilterParams } from "@/utils/filter/filterUtils";
 
 /**

@@ -10,7 +10,7 @@ import CustomSelect from "../../ui/CustomSelect";
 
 import CartItemCard from "./CartItemCard";
 import { css, cx } from "~/styled-system/css";
-import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/constant/order_discounts_taxes";
+import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/constants/order_discounts_taxes";
 
 /**
  * Props for the CartDrawer component.

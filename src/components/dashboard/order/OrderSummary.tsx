@@ -5,7 +5,7 @@ import { OrderConfirmation } from "./OrderConfirmation";
 import {
   ORDER_LEVEL_DISCOUNTS,
   ORDER_LEVEL_TAXES,
-} from "@/constant/order_discounts_taxes";
+} from "@/constants/order_discounts_taxes";
 
 /**
  * Props for the OrderSummary component.

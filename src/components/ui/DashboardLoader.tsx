@@ -1,10 +1,6 @@
 import { css } from "~/styled-system/css";
 
-interface LoaderProps {
-  borderColor?: "border.home" | "border.dashboard";
-}
-
-export default function Loader({ borderColor = "border.home" }: LoaderProps) {
+export default function DashboardLoader() {
   return (
     <div
       className={css({
@@ -28,8 +24,7 @@ export default function Loader({ borderColor = "border.home" }: LoaderProps) {
             borderRadius: "50%",
             height: "64px",
             width: "64px",
-            border: "4px solid",
-            borderColor: borderColor,
+            border: "4px solid rgb(39, 39, 39)",
             borderTopColor: "transparent",
             margin: "0 auto",
           })}

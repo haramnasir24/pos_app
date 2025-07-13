@@ -3,7 +3,7 @@
 import Authenticated from "@/components/home/auth/Authenticated";
 import SignInButton from "@/components/home/signin/SignInButton";
 import SignInText from "@/components/home/signin/SignInText";
-import Loader from "@/components/ui/Loader";
+import HomeLoader from "@/components/ui/HomeLoader";
 import { useSession } from "next-auth/react";
 
 import { css } from "~/styled-system/css";
@@ -12,7 +12,7 @@ export default function HomePage() {
   const { data: session, status } = useSession();
 
   if (status === "loading") {
-    return <Loader borderColor="border.home" />;
+    return <HomeLoader />;
   }
 
   if (session) {

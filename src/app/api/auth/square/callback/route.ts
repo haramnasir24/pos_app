@@ -2,7 +2,6 @@
 // for this set redirect uri to http://localhost:3000/api/auth/square/callback at square developer portal
 // and go to http://localhost:3000/test-square to test the oauth flow
 
-// ? make this a server action
 
 import { NextRequest, NextResponse } from "next/server";
 
