@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import DashboardHeader from "@/components/dashboard/header/DashboardHeader";
 import ProductSectionSkeleton from "@/components/dashboard/products/ProductSectionSkeleton";
 import ProductSection from "@/components/dashboard/products/ProductSection";
+import { API_CONFIG } from "@/constants/api";
 
 /**
  * Dashboard page for authenticated users.
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
   let products = null;
   try {
     const response = await fetch(
-      "https://connect.squareupsandbox.com/v2/catalog/search",
+      `${API_CONFIG.SQUARE_BASE_URL}/v2/catalog/search`,
       {
         method: "POST",
         headers: {
@@ -70,7 +71,7 @@ export default async function DashboardPage() {
   let inventoryData = null;
   try {
     const response = await fetch(
-      "https://connect.squareupsandbox.com/v2/inventory/counts/batch-retrieve",
+      `${API_CONFIG.SQUARE_BASE_URL}/v2/inventory/counts/batch-retrieve`,
       {
         method: "POST",
         headers: {
