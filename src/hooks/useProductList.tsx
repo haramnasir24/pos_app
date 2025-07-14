@@ -1,6 +1,6 @@
 "use client";
 
-import { fetchProducts } from "@/utils/fetchProducts";
+import { fetchProducts } from "@/services/productService";
 // this is a hook that fetches products from the Square API
 
 import { useQuery } from "@tanstack/react-query";

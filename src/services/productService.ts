@@ -15,9 +15,6 @@ export async function fetchProducts(
     const setQuery = params.query?.set_query; // * for filter by category
     const textQuery = params.query?.text_query; // * for search by keyword
 
-    console.log(setQuery);
-    console.log(textQuery);
-
     let query = undefined;
 
     if (setQuery && textQuery) {
@@ -36,17 +33,14 @@ export async function fetchProducts(
       object_types: params.types
         .split(",")
         .map((t: string) => t.trim().toUpperCase()),
-      query: query, // TODO: combine both filter and search queries
+      query: query,
       include_related_objects: true,
     };
-
-    console.log("body:", body);
 
     const response = await fetch("/api/products/searchCatalog", {
       method: "POST",
       headers: {
         Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
       },
       body: JSON.stringify(body),
     });

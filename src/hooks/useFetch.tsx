@@ -1,4 +1,3 @@
-import { API_CONFIG } from "@/constants/api";
 import { useState, useEffect } from "react";
 import { apiFetch } from "@/utils/apiFetch";
 

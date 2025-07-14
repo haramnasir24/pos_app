@@ -6,7 +6,7 @@ import { css } from "~/styled-system/css";
 export function DashboardSignOutButton() {
   return (
     <button
-      onClick={() => signOut({ callbackUrl: "/" })}
+      onClick={() => signOut()}
       className={css({
         px: "4",
         py: "2",

@@ -1,5 +1,6 @@
 // gateway that connects Next.js app to the Auth.js authentication system
 
+import { API_CONFIG } from "@/constants/api";
 import type { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth";
 
@@ -28,7 +29,7 @@ export const authOptions: NextAuthOptions = {
             {
               method: "POST",
               headers: {
-                "Square-Version": "2025-06-18",
+                "Square-Version": `${API_CONFIG.SQUARE_VERSION}`,
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
@@ -36,7 +37,7 @@ export const authOptions: NextAuthOptions = {
                 client_secret: process.env.SQUARE_CLIENT_SECRET!,
                 code: params.code,
                 grant_type: "authorization_code",
-                redirect_uri: "http://localhost:3000/api/auth/callback/square",
+                redirect_uri: `${process.env.SQUARE_REDIRECT_URI!}`,
               }),
             }
           );
@@ -59,7 +60,7 @@ export const authOptions: NextAuthOptions = {
               headers: {
                 Authorization: `Bearer ${tokens.access_token}`,
                 "Content-Type": "application/json",
-                "Square-Version": "2025-06-18",
+                "Square-Version": `${API_CONFIG.SQUARE_VERSION}`,
               },
             }
           );

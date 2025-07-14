@@ -31,6 +31,28 @@ import {
 import { buildImageMap } from "@/utils/image/imageUtils";
 import { createDiscountApplications } from "@/utils/discount/discountApplicationUtils";
 
+export type UseProductSectionDataProps = {
+  accessToken: string;
+  products?: any;
+  inventory?: any;
+};
+
+export type UseProductSectionDataReturn = {
+  params: { types: string; query?: string };
+  setParams: React.Dispatch<React.SetStateAction<{ types: string; query?: string }>>;
+  isPending: boolean;
+  error: unknown;
+  items: any[];
+  taxes_data: any;
+  discounts_data: any;
+  cartInventoryInfo: any;
+  inventoryMap: any;
+  imageMap: any;
+  variationIds: any[];
+  categoryObjects: any;
+  discountApplications: any;
+};
+
 /**
  * Custom hook to manage and aggregate all product section data for the dashboard.
  * Handles fetching, transforming, and mapping of products, inventory, discounts, pricing rules, and categories.
@@ -40,11 +62,7 @@ export function useProductSectionData({
   accessToken,
   products,
   inventory,
-}: {
-  accessToken: string;
-  products?: any;
-  inventory?: any;
-}) {
+}: UseProductSectionDataProps): UseProductSectionDataReturn {
   // * set params for fetching products
   const [params, setParams] = useState<{
     types: string;

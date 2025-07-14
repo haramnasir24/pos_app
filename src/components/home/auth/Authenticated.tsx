@@ -3,8 +3,6 @@ import { css } from "~/styled-system/css";
 import { HomeSignOutButton } from "../signout/HomeSignOutButton";
 import { flex } from "~/styled-system/patterns";
 
-
-
 type sessionProps = {
   session: Session;
 };

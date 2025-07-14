@@ -76,7 +76,6 @@ export default function ProductCard({
       <div
         className={css({
           width: "full",
-          // height: "200px",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",

@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { fetchInventory } from "../utils/fetchInventory";
+import { fetchInventory } from "../services/inventoryService";
 
 export function useInventoryData(variationIds: string[], accessToken: string) {
   // useQuery is used for get requests

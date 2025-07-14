@@ -7,7 +7,6 @@ import SearchBar from "../search/SearchBar";
 import FilterButton from "../filter/FilterButton";
 import { useProductSectionData } from "../../../hooks/useProductSectionData";
 import { css } from "~/styled-system/css";
-import Loader from "@/components/ui/HomeLoader";
 import DashboardLoader from "@/components/ui/DashboardLoader";
 
 /**
@@ -84,7 +83,7 @@ export default function ProductSection({
       <div
         className={css({
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gridTemplateColumns: ["1fr", "repeat(2, 1fr)", "repeat(3, 1fr)"], // responsive: 1/2/3 columns
           gap: "4",
         })}
       >
