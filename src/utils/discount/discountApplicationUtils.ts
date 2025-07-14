@@ -1,9 +1,15 @@
-import { DiscountData, ProductSetData, DiscountApplication } from "./productDataTransformers";
+import {
+  DiscountData,
+  DiscountApplication,
+  ProductSetData,
+} from "../productDataTransformers";
 
 /**
  * Calculates discount value from discount data
  */
-export function calculateDiscountValue(discount: DiscountData): string | number | null {
+export function calculateDiscountValue(
+  discount: DiscountData
+): string | number | null {
   if (discount.percentage !== undefined) {
     return `${discount.percentage}%`;
   } else if (discount.amount !== undefined) {
@@ -25,15 +31,25 @@ export function determineAppliedProductIds(
   if (productSet.all_products) {
     // Applies to all items
     applied_product_ids = allItemIds;
-  } else if (productSet.product_ids_any && productSet.product_ids_any.length > 0) {
+  } else if (
+    productSet.product_ids_any &&
+    productSet.product_ids_any.length > 0
+  ) {
     // Applies to these product/category IDs
     applied_product_ids = productSet.product_ids_any;
-  } else if (productSet.product_ids_all && productSet.product_ids_all.length > 0) {
+  } else if (
+    productSet.product_ids_all &&
+    productSet.product_ids_all.length > 0
+  ) {
     // Look up the first product set in product_sets_data
     const nestedSet = productSetsData.find(
       (ps) => ps.id === productSet.product_ids_all![0]
     );
-    if (nestedSet && nestedSet.product_ids_any && nestedSet.product_ids_any.length > 0) {
+    if (
+      nestedSet &&
+      nestedSet.product_ids_any &&
+      nestedSet.product_ids_any.length > 0
+    ) {
       applied_product_ids = [nestedSet.product_ids_any[0]];
     }
   }
@@ -45,7 +61,10 @@ export function determineAppliedProductIds(
  * Creates discount applications by mapping discounts to products through pricing rules and product sets
  */
 export function createDiscountApplications(
-  discountToProductSetMap: Array<{ discount_id: string; product_set_id: string }>,
+  discountToProductSetMap: Array<{
+    discount_id: string;
+    product_set_id: string;
+  }>,
   discountsData: DiscountData[],
   productSetsData: ProductSetData[],
   allItemIds: string[]
@@ -89,4 +108,4 @@ export function filterValidDiscountApplications(
   return discountApplications.filter(
     (app) => app.applied_product_ids.length > 0
   );
-} 
+}

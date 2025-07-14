@@ -23,12 +23,13 @@ import {
   transformProductSets,
   transformTaxes,
 } from "../utils/productDataTransformers";
-import { createDiscountApplications } from "../utils/discountApplicationUtils";
+
 import {
   buildCartInventoryInfo,
-  buildImageMap,
   buildInventoryMap,
-} from "../utils/inventoryImageUtils";
+} from "../utils/inventory/inventoryUtils";
+import { buildImageMap } from "@/utils/image/imageUtils";
+import { createDiscountApplications } from "@/utils/discount/discountApplicationUtils";
 
 /**
  * Custom hook to manage and aggregate all product section data for the dashboard.

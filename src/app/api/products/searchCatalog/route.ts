@@ -2,37 +2,37 @@
 // server side rendering
 
 import { NextRequest, NextResponse } from "next/server";
+import { apiFetch } from "@/utils/apiFetch";
+import { API_CONFIG } from "@/constants/api";
 
 export async function POST(req: NextRequest) {
   const { object_types, query, include_related_objects } = await req.json();
   const accessToken = req.headers.get("authorization")?.replace("Bearer ", "");
 
-  const url = "https://connect.squareupsandbox.com/v2/catalog/search";
+  const url = `${API_CONFIG.SQUARE_BASE_URL}/v2/catalog/search`;
   const body = {
     object_types,
     query,
     include_related_objects,
   };
 
-  // console.log("body:", body);
-
-  const res = await fetch(url, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      "Square-Version": "2025-06-18",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
+  try {
+    const data = await apiFetch(
+      url,
+      {
+        method: "POST",
+        body: JSON.stringify(body),
+      },
+      accessToken
+    );
+    return NextResponse.json(data);
+  } catch (err) {
     return NextResponse.json(
-      { error: "Failed to fetch products(2)" },
-      { status: res.status }
+      {
+        error:
+          err instanceof Error ? err.message : "Failed to fetch products(2)",
+      },
+      { status: 500 }
     );
   }
-
-  const data = await res.json();
-  return NextResponse.json(data, { status: res.status });
 }

@@ -1,9 +1,8 @@
 // * api endpoint for getting the inventory count
 
 import { NextRequest, NextResponse } from "next/server";
-import axios from "axios";
-
-const SQUARE_VERSION = "2025-06-18";
+import { apiFetch } from "@/utils/apiFetch";
+import { API_CONFIG } from "@/constants/api";
 
 export async function POST(req: NextRequest) {
   try {
@@ -36,21 +35,17 @@ export async function POST(req: NextRequest) {
       ...(locationIds ? { location_ids: locationIds } : {}),
     };
 
-    const response = await axios.post(
-      "https://connect.squareupsandbox.com/v2/inventory/counts/batch-retrieve",
-      payload,
+    const data = await apiFetch(
+      `${API_CONFIG.SQUARE_BASE_URL}/v2/inventory/counts/batch-retrieve`,
       {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Square-Version": SQUARE_VERSION,
-          "Content-Type": "application/json",
-        },
-      }
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      accessToken
     );
-
-    return NextResponse.json(response.data);
-  } catch (err: any) {
-    const errorMsg = err.response?.data || err.message || "Unknown error";
+    return NextResponse.json(data);
+  } catch (err) {
+    const errorMsg = err instanceof Error ? err.message : "Unknown error";
     return NextResponse.json({ error: errorMsg }, { status: 500 });
   }
 }

@@ -2,6 +2,8 @@ import { promises as fs } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { apiFetch } from "@/utils/apiFetch";
+import { API_CONFIG } from "@/constants/api";
 
 // * helper to map a product to Square CatalogObject format, accepts imageId
 function mapProductToCatalogObject(product: any, imageId?: string) {
@@ -106,30 +108,24 @@ export async function POST(req: NextRequest) {
   ];
 
   const batch = { objects };
-  console.log(batch);
 
   const body = {
     idempotency_key: uuidv4(),
     batches: [batch],
   };
 
-  const res = await fetch(
-    "https://connect.squareupsandbox.com/v2/catalog/batch-upsert",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Square-Version": "2025-06-18",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-    }
-  );
+  const url = `${API_CONFIG.SQUARE_BASE_URL}/v2/catalog/batch-upsert`;
 
-  const data = await res.json();
-  console.log(data);
-  if (!res.ok) {
-    return NextResponse.json({ error: data }, { status: res.status });
+  try {
+    const data = await apiFetch(url, {
+      method: "POST",
+      body: JSON.stringify(body),
+    }, accessToken);
+    return NextResponse.json(data);
+  } catch (err) {
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : "Failed to batch upsert products" },
+      { status: 500 }
+    );
   }
-  return NextResponse.json(data, { status: res.status });
 }

@@ -1,12 +1,12 @@
-import axios from "axios";
 import FormData from "form-data";
 import { promises as fsPromises } from "fs"; // research this
 import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
+import { apiFetch } from "@/utils/apiFetch";
+import { API_CONFIG } from "@/constants/api";
 
-const SQUARE_VERSION = "2025-06-18";
 const IMAGES_DIR = path.join(process.cwd(), "images_jpg");
 const OUT_JSON = path.join(process.cwd(), "square_image_ids.json");
 const DATA_PATH = path.join(process.cwd(), "data.json");
@@ -42,23 +42,21 @@ async function uploadImage(filePath: string, fileName: string, accessToken: stri
   );
 
   try {
-    const res = await axios.post(
-      "https://connect.squareupsandbox.com/v2/catalog/images",
-      form,
+    const data = await apiFetch(
+      `${API_CONFIG.SQUARE_BASE_URL}/v2/catalog/images`,
       {
+        method: "POST",
+        body: form as any, // node-fetch supports FormData
         headers: {
           ...form.getHeaders(),
-          Authorization: `Bearer ${accessToken}`,
-          "Square-Version": SQUARE_VERSION,
           Accept: "application/json",
         },
-        maxContentLength: Infinity,
-        maxBodyLength: Infinity,
-      }
+      },
+      accessToken
     );
-    return res.data.image?.id;
+    return data.image?.id;
   } catch (err: any) {
-    console.error("Failed to upload", fileName, err.response?.data || err.message);
+    console.error("Failed to upload", fileName, err instanceof Error ? err.message : err);
     return null;
   }
 }

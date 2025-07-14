@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-
-const SQUARE_VERSION = "2025-06-18";
+import { apiFetch } from "@/utils/apiFetch";
+import { API_CONFIG } from "@/constants/api";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,26 +13,14 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const response = await fetch(
-      "https://connect.squareupsandbox.com/v2/catalog/search",
+    const data = await apiFetch(
+      `${API_CONFIG.SQUARE_BASE_URL}/v2/catalog/search`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          "Square-Version": SQUARE_VERSION,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          object_types: ["DISCOUNT"],
-        }),
-      }
+        body: JSON.stringify({ object_types: ["DISCOUNT"] }),
+      },
+      accessToken
     );
-
-    if (!response.ok) {
-      throw new Error(`Square API error: ${response.status}`);
-    }
-
-    const data = await response.json();
     return NextResponse.json(data);
   } catch (error) {
     console.error("Failed to fetch discounts:", error);
