@@ -1,21 +1,7 @@
 "use client";
 
+import { ProductSet, UseProductSetsReturn } from "@/types/product";
 import { useEffect, useState } from "react";
-
-interface ProductSet {
-  id: string;
-  product_set_data: {
-    all_products?: boolean;
-    product_ids_all?: string[];
-    product_ids_any?: string[];
-  };
-}
-
-interface UseProductSetsReturn {
-  productSets: ProductSet[];
-  isLoading: boolean;
-  error: string | null;
-}
 
 export function useProductSets(accessToken: string): UseProductSetsReturn {
   const [productSets, setProductSets] = useState<ProductSet[]>([]);
@@ -67,4 +53,4 @@ export function useProductSets(accessToken: string): UseProductSetsReturn {
     isLoading,
     error,
   };
-} 
+}

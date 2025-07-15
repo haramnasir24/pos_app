@@ -1,14 +1,23 @@
+import {
+  CategoryObject,
+  Discount,
+  PricingRule,
+  Product,
+  ProductSet,
+  Tax,
+} from "@/types/product";
+
 /**
  * Extracts items from product data
  */
-export function extractItems(productData: any): any[] {
+export function extractItems(productData: any): Product[] {
   return productData?.objects?.filter((obj: any) => obj.type === "ITEM") || [];
 }
 
 /**
  * Extracts taxes from product data (both objects and related_objects)
  */
-export function extractTaxes(productData: any): any[] {
+export function extractTaxes(productData: any): Tax[] {
   return [
     ...(productData?.objects?.filter((obj: any) => obj.type === "TAX") ?? []),
     ...(productData?.related_objects?.filter(
@@ -20,7 +29,7 @@ export function extractTaxes(productData: any): any[] {
 /**
  * Extracts discounts from product data
  */
-export function extractDiscounts(productData: any): any[] {
+export function extractDiscounts(productData: any): Discount[] {
   return (
     productData?.objects?.filter((obj: any) => obj.type === "DISCOUNT") || []
   );
@@ -29,7 +38,7 @@ export function extractDiscounts(productData: any): any[] {
 /**
  * Extracts pricing rules from product data
  */
-export function extractPricingRules(productData: any): any[] {
+export function extractPricingRules(productData: any): PricingRule[] {
   return (
     productData?.objects?.filter((obj: any) => obj.type === "PRICING_RULE") ||
     []
@@ -39,7 +48,7 @@ export function extractPricingRules(productData: any): any[] {
 /**
  * Extracts product sets from product data
  */
-export function extractProductSets(productData: any): any[] {
+export function extractProductSets(productData: any): ProductSet[] {
   return (
     productData?.objects?.filter((obj: any) => obj.type === "PRODUCT_SET") || []
   );
@@ -48,7 +57,7 @@ export function extractProductSets(productData: any): any[] {
 /**
  * Extracts categories from product data
  */
-export function extractCategories(productData: any): any[] {
+export function extractCategories(productData: any): CategoryObject[] {
   return (
     productData?.objects?.filter((obj: any) => obj.type === "CATEGORY") || []
   );

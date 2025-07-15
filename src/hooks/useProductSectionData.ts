@@ -30,27 +30,38 @@ import {
 } from "../utils/inventory/inventoryUtils";
 import { buildImageMap } from "@/utils/image/imageUtils";
 import { createDiscountApplications } from "@/utils/discount/discountApplicationUtils";
+import {
+  Product,
+  ProductCatalog,
+  Inventory,
+  InventoryMap,
+  ImageMap,
+  DiscountApplication,
+  TransformedTax,
+} from "@/types/product";
 
 export type UseProductSectionDataProps = {
   accessToken: string;
-  products?: any;
-  inventory?: any;
+  products?: ProductCatalog;
+  inventory?: Inventory;
 };
 
 export type UseProductSectionDataReturn = {
   params: { types: string; query?: string };
-  setParams: React.Dispatch<React.SetStateAction<{ types: string; query?: string }>>;
+  setParams: React.Dispatch<
+    React.SetStateAction<{ types: string; query?: string }>
+  >;
   isPending: boolean;
   error: unknown;
-  items: any[];
-  taxes_data: any;
+  items: Product[];
+  taxes_data: TransformedTax[];
   discounts_data: any;
   cartInventoryInfo: any;
-  inventoryMap: any;
-  imageMap: any;
-  variationIds: any[];
+  inventoryMap: InventoryMap;
+  imageMap: ImageMap;
+  variationIds: string[];
   categoryObjects: any;
-  discountApplications: any;
+  discountApplications: DiscountApplication[];
 };
 
 /**
@@ -78,25 +89,21 @@ export function useProductSectionData({
   );
 
   // * custom hook for fetching discounts - only run when there's a query
-  const {
-    discounts: fetchedDiscounts,
-    isLoading: discountsLoading,
-    error: discountsError,
-  } = useDiscounts(params.query ? accessToken : "");
+  const { discounts: fetchedDiscounts } = useDiscounts(
+    params.query ? accessToken : ""
+  );
+  // console.log(fetchedDiscounts)
+  // console.log(fetchedDiscounts.length);
 
   // * custom hook for fetching pricing rules - only run when there's a query
-  const {
-    pricingRules: fetchedPricingRules,
-    isLoading: pricingRulesLoading,
-    error: pricingRulesError,
-  } = usePricingRules(params.query ? accessToken : "");
+  const { pricingRules: fetchedPricingRules } = usePricingRules(
+    params.query ? accessToken : ""
+  );
 
   // * custom hook for fetching product sets - only run when there's a query
-  const {
-    productSets: fetchedProductSets,
-    isLoading: productSetsLoading,
-    error: productSetsError,
-  } = useProductSets(params.query ? accessToken : "");
+  const { productSets: fetchedProductSets } = useProductSets(
+    params.query ? accessToken : ""
+  );
 
   // * use server-side products if provided, otherwise use client-fetched data
   const productData = useMemo(() => {

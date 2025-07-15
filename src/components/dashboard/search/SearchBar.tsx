@@ -43,6 +43,7 @@ export default function SearchBar({ setParams, prevParams }: SearchBarProps) {
           text_query: undefined,
         },
       });
+      // setSearchInput('');
     }
   }, [debouncedSearch]);
 

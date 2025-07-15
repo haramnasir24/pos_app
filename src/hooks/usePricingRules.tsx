@@ -1,20 +1,7 @@
 "use client";
 
+import { PricingRule, UsePricingRulesReturn } from "@/types/product";
 import { useEffect, useState } from "react";
-
-interface PricingRule {
-  id: string;
-  pricing_rule_data: {
-    discount_id: string;
-    match_products_id: string;
-  };
-}
-
-interface UsePricingRulesReturn {
-  pricingRules: PricingRule[];
-  isLoading: boolean;
-  error: string | null;
-}
 
 export function usePricingRules(accessToken: string): UsePricingRulesReturn {
   const [pricingRules, setPricingRules] = useState<PricingRule[]>([]);

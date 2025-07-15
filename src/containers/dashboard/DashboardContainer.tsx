@@ -88,7 +88,7 @@ export default async function DashboardContainer() {
     // fail silently, fallback to client fetch
   }
 
-  //   console.log(products);
+  // console.log(products);
 
   return (
     <div className={css({ minH: "100vh", bg: "gray.50" })}>

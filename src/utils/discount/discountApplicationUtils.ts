@@ -1,8 +1,8 @@
 import {
-  DiscountData,
   DiscountApplication,
+  DiscountData,
   ProductSetData,
-} from "../productDataTransformers";
+} from "@/types/product";
 
 /**
  * Calculates discount value from discount data

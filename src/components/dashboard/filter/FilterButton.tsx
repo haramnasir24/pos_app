@@ -6,11 +6,7 @@ import { useState } from "react";
 import { css } from "~/styled-system/css";
 import categoryObjects from "@/constants/categories.json";
 import { buildCategoryFilterParams } from "@/utils/filter/filterUtils";
-
-/**
- * Represents a category object with id and name.
- */
-type CategoryObj = { id: string; name: string };
+import { CategoryObject } from "@/types/product";
 
 /**
  * Props for the FilterButton component.
@@ -33,7 +29,7 @@ export default function FilterButton({
    * Applies the selected categories as filters using the utility function.
    * @param {CategoryObj[]} selected - Selected categories.
    */
-  const onApply = (selected: CategoryObj[]) => {
+  const onApply = (selected: CategoryObject[]) => {
     setParams(buildCategoryFilterParams(selected, prevParams));
   };
 

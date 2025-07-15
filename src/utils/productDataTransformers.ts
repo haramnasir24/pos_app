@@ -1,49 +1,21 @@
+import {
+  CategoryObject,
+  Discount,
+  DiscountData,
+  PricingRule,
+  PricingRuleData,
+  ProductSet,
+  ProductSetData,
+  Tax,
+  TaxData,
+} from "@/types/product";
+
 // Types for data transformation
-export interface TaxData {
-  id: string;
-  name: string;
-  percentage: number;
-  enabled: boolean;
-}
-
-export interface DiscountData {
-  id: string;
-  name: string;
-  type: string;
-  modify_tax_basis: string;
-  percentage?: number;
-  amount?: number;
-}
-
-export interface PricingRuleData {
-  id: string;
-  discount_id: string;
-  match_products_id: string;
-}
-
-export interface ProductSetData {
-  id: string;
-  all_products: boolean;
-  product_ids_all?: string[];
-  product_ids_any?: string[];
-}
-
-export interface CategoryObject {
-  id: string;
-  name: string;
-}
-
-export interface DiscountApplication {
-  discount_id: string;
-  discount_name: string;
-  discount_value: string | number | null;
-  applied_product_ids: string[];
-}
 
 /**
  * Transforms raw tax objects into structured tax data
  */
-export function transformTaxes(taxes: any[]): TaxData[] {
+export function transformTaxes(taxes: Tax[]): TaxData[] {
   return taxes.map((tax: any) => ({
     id: tax.id,
     name: tax.tax_data.name,
@@ -55,7 +27,7 @@ export function transformTaxes(taxes: any[]): TaxData[] {
 /**
  * Transforms raw discount objects into structured discount data
  */
-export function transformDiscounts(discounts: any[]): DiscountData[] {
+export function transformDiscounts(discounts: Discount[]): DiscountData[] {
   return discounts.map((discount: any) => {
     const { id, discount_data } = discount;
     const base = {
@@ -84,7 +56,9 @@ export function transformDiscounts(discounts: any[]): DiscountData[] {
 /**
  * Transforms raw pricing rule objects into structured pricing rule data
  */
-export function transformPricingRules(pricingRules: any[]): PricingRuleData[] {
+export function transformPricingRules(
+  pricingRules: PricingRule[]
+): PricingRuleData[] {
   return pricingRules.map((pricing_rule: any) => ({
     id: pricing_rule.id,
     discount_id: pricing_rule.pricing_rule_data.discount_id,
@@ -95,7 +69,9 @@ export function transformPricingRules(pricingRules: any[]): PricingRuleData[] {
 /**
  * Transforms raw product set objects into structured product set data
  */
-export function transformProductSets(productSets: any[]): ProductSetData[] {
+export function transformProductSets(
+  productSets: ProductSet[]
+): ProductSetData[] {
   return productSets.map((product_set: any) => ({
     id: product_set.id,
     all_products: product_set.product_set_data.all_products || false,
@@ -123,5 +99,3 @@ export function createDiscountToProductSetMap(pricingRules: PricingRuleData[]) {
     product_set_id: rule.match_products_id,
   }));
 }
-
-

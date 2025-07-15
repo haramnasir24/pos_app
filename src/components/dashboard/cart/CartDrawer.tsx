@@ -3,14 +3,14 @@
 import { MdOutlineAddShoppingCart } from "react-icons/md";
 import { useContext, useState } from "react";
 import { CartContext, TaxRate } from "../../../context/CartContext";
-
-import Image from "next/image";
 import { OrderSummary } from "../order/OrderSummary";
 import CustomSelect from "../../ui/CustomSelect";
-
 import CartItemCard from "./CartItemCard";
 import { css, cx } from "~/styled-system/css";
-import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/constants/order_discounts_taxes";
+import {
+  ORDER_LEVEL_DISCOUNTS,
+  ORDER_LEVEL_TAXES,
+} from "@/constants/order_discounts_taxes";
 
 /**
  * Props for the CartDrawer component.
@@ -22,7 +22,6 @@ import { ORDER_LEVEL_DISCOUNTS, ORDER_LEVEL_TAXES } from "@/constants/order_disc
 type CartDrawerProps = {
   accessToken?: string;
   cartInventoryInfo: Record<string, { state: string; quantity: string }>;
-  taxes_data: TaxRate[];
   itemVariationIds: string[];
 };
 

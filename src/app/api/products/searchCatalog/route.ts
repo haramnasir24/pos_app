@@ -29,8 +29,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     return NextResponse.json(
       {
-        error:
-          err instanceof Error ? err.message : "Failed to fetch products(2)",
+        error: err instanceof Error ? err.message : "Failed to fetch products",
       },
       { status: 500 }
     );

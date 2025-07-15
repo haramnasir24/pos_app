@@ -36,8 +36,6 @@ export default function ProductCard({
   imageUrl,
   state,
   quantity,
-  is_taxable,
-  itemTaxRate,
   variantId,
   discounts,
   taxes,

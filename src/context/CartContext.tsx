@@ -74,7 +74,7 @@ export type OrderSummary = {
 
 /**
  * Represents the cart as an object with item IDs as keys and CartItem as values.
- * Used to loop up cart items using their ids
+ * Used to look up cart items using their ids
  */
 export type Cart = {
   [id: string]: CartItem;
@@ -143,6 +143,7 @@ export function CartContextProvider({
   const [cart, setCart] = useState<Cart>({});
 
   // * Add item to cart
+  // function definition always stays the same
   const addToCart = useCallback((item: Omit<CartItem, "quantity">) => {
     setCart((prev) => {
       if (prev[item.id]) {
@@ -247,8 +248,8 @@ export function CartContextProvider({
   const getOrderSummary = useCallback((): OrderSummary => {
     const items = Object.values(cart);
     let subtotal = 0;
-    let discountAmount = 0;
-    let taxAmount = 0;
+    let discountAmount = 0; // * accumulates discounts for all items
+    let taxAmount = 0; // * accumulates taxes for all items
     const appliedDiscounts: Discount[] = [];
     const appliedTaxRates: TaxRate[] = [];
 
@@ -261,33 +262,7 @@ export function CartContextProvider({
       // * Apply discount if present
       if (item.itemDiscount) {
         appliedDiscounts.push(item.itemDiscount);
-        const value = item.itemDiscount.discount_value;
-        // BOGO: 100% off for every second item
-        if (value === "100%" || value === 100) {
-          if (item.quantity >= 2) {
-            // * Number of free items = floor(quantity / 2)
-            const freeItems = Math.floor(item.quantity / 2);
-            itemDiscountValue = freeItems * itemPrice;
-          } else {
-            // Less than 2 items, no BOGO discount
-            itemDiscountValue = 0;
-          }
-        } else if (typeof value === "string" && value.includes("%")) {
-          // Percentage discount
-          const percent = parseFloat(value);
-          if (!isNaN(percent)) {
-            itemDiscountValue = (itemSubtotal * percent) / 100;
-          }
-        } else if (typeof value === "number") {
-          // Fixed amount discount
-          itemDiscountValue = value * item.quantity;
-        } else if (typeof value === "string") {
-          // Try to parse as number
-          const num = parseFloat(value);
-          if (!isNaN(num)) {
-            itemDiscountValue = num * item.quantity;
-          }
-        }
+        itemDiscountValue = calculateItemDiscountValue(item, itemSubtotal);
       }
       const discountedSubtotal = itemSubtotal - itemDiscountValue;
       discountAmount += itemDiscountValue;
@@ -303,7 +278,7 @@ export function CartContextProvider({
         itemTaxValue = (discountedSubtotal * item.itemTaxRate) / 100;
       }
       taxAmount += itemTaxValue;
-      subtotal += discountedSubtotal;
+      subtotal += discountedSubtotal; // * subtotal is discounted
     }
     const total = subtotal + taxAmount;
     return {
@@ -339,4 +314,39 @@ export function CartContextProvider({
       {children}
     </CartContext.Provider>
   );
+}
+
+// * calculates the discounted amount for each item
+function calculateItemDiscountValue(item: CartItem, itemSubtotal: number): number {
+  if (!item.itemDiscount) return 0;
+  const value = item.itemDiscount.discount_value;
+
+  // BOGO: 100% off for every second item
+  if (value === "100%" || value === 100) {
+    if (item.quantity >= 2) {
+      const freeItems = Math.floor(item.quantity / 2);
+      return freeItems * (item.price ?? 0);
+    }
+    return 0;
+  }
+
+  // Percentage discount
+  if (typeof value === "string" && value.includes("%")) {
+    const percent = parseFloat(value);
+    return !isNaN(percent) ? (itemSubtotal * percent) / 100 : 0;
+  }
+
+  // Fixed amount discount (number)
+  if (typeof value === "number") {
+    return value * item.quantity;
+  }
+
+  // Fixed amount discount (string that parses to number)
+  if (typeof value === "string") {
+    const num = parseFloat(value);
+    return !isNaN(num) ? num * item.quantity : 0;
+  }
+
+  // Default: no discount
+  return 0;
 }

@@ -2,7 +2,6 @@
 
 import ProductCard from "./ProductCard";
 import CartDrawer from "../cart/CartDrawer";
-
 import SearchBar from "../search/SearchBar";
 import FilterButton from "../filter/FilterButton";
 import { useProductSectionData } from "../../../hooks/useProductSectionData";
@@ -34,12 +33,10 @@ export default function ProductSection({
     error,
     items,
     taxes_data,
-    discounts_data,
     cartInventoryInfo,
     inventoryMap,
     imageMap,
     variationIds,
-    categoryObjects,
     discountApplications,
   } = useProductSectionData({ accessToken, products, inventory });
 
@@ -50,7 +47,6 @@ export default function ProductSection({
       <CartDrawer
         accessToken={accessToken}
         cartInventoryInfo={cartInventoryInfo}
-        taxes_data={taxes_data} // * remove this
         itemVariationIds={variationIds}
       />
       <div
@@ -74,7 +70,7 @@ export default function ProductSection({
         />
       </div>
       {isPending && !products && <DashboardLoader />}
-      {error && <div>Error loading products</div>}
+      {Boolean(error) && <div>Error loading products</div>}
       {!isPending && !error && items.length === 0 && (
         <div style={{ textAlign: "center", margin: "2rem 0", color: "#888" }}>
           No items found
@@ -106,11 +102,6 @@ export default function ProductSection({
             return tax ? { name: tax.name, percentage: tax.percentage } : null;
           });
 
-          // * Get sales tax rate for the item
-          const salesTax = matchedTaxes.filter(
-            (obj: any) => obj?.name === "Sales Tax"
-          );
-          const itemTaxRate = salesTax[0]?.percentage;
 
           // * Build discounts array for each item
           const discounts = discountApplications
@@ -160,3 +151,4 @@ export default function ProductSection({
     </div>
   );
 }
+

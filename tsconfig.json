@@ -1,28 +1,41 @@
 {
+   // Main settings for how TypeScript compiles and checks the code
   "compilerOptions": {
-    "target": "ES2017",
-    "lib": ["dom", "dom.iterable", "esnext"],
+    // Output JavaScript code compatible with ES2017 (modern JS, but not the very latest)
+    "target": "ES2017", 
+    // Include type definitions for DOM, iterable objects, and latest JS features
+    "lib": ["dom", "dom.iterable", "esnext"], 
+    // Allow JavaScript files to be included in the project
     "allowJs": true,
-    "skipLibCheck": true, // Skip type checking of declaration files (.d.ts) for faster builds.
-    "strict": true,
-    "noEmit": true, // Dont output compiled JS files—just type-check (Next.js handles the build).
-    "esModuleInterop": true, // Allow default imports from modules with no default export.
-    "module": "esnext", // Use modern ES module syntax.
-    "moduleResolution": "bundler", // Use bundler-style module resolution (good for Next.js).
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true, // Enable faster incremental builds.
+    "skipLibCheck": true, // Skip type checking of declaration files (.d.ts) for faster builds
+    "strict": true, // strict type checking
+    "noEmit": true, // Dont output compiled JS files, just type-check (Next.js handles the build)
+    "esModuleInterop": true, // Allow default imports from modules with no default export
+    "module": "esnext", // Use modern ES module syntax
+    "moduleResolution": "bundler", // Use bundler-style module resolution (good for Next.js)
+    "resolveJsonModule": true, // Allow importing .json files as modules
+    "isolatedModules": true, // Ensure each file can be safely transpiled in isolation (required by Next.js)
+    "jsx": "preserve", // Keep JSX as-is for further processing (Next.js will handle it)
+    "incremental": true, // Enable faster incremental builds by saving info from previous builds
     "plugins": [
       {
         "name": "next"
       }
     ],
-    "paths": { // path aliases
+    "paths": {
+      // path aliases
       "@/*": ["./src/*"],
       "~/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src", "styled-system", "next.config.js"], 
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src",
+    "styled-system",
+    "next.config.js"
+  ],
   "exclude": ["node_modules"]
 }

@@ -1,24 +1,7 @@
 "use client";
 
+import { Discount, UseDiscountsReturn } from "@/types/product";
 import { useEffect, useState } from "react";
-
-interface Discount {
-  id: string;
-  discount_data: {
-    name: string;
-    discount_type: string;
-    percentage?: string;
-    amount_money?: {
-      amount: number;
-    };
-  };
-}
-
-interface UseDiscountsReturn {
-  discounts: Discount[];
-  isLoading: boolean;
-  error: string | null;
-}
 
 export function useDiscounts(accessToken: string): UseDiscountsReturn {
   const [discounts, setDiscounts] = useState<Discount[]>([]);

@@ -5,7 +5,6 @@ import SignInButton from "@/components/home/signin/SignInButton";
 import SignInText from "@/components/home/signin/SignInText";
 import HomeLoader from "@/components/ui/HomeLoader";
 import { useSession } from "next-auth/react";
-
 import { css } from "~/styled-system/css";
 
 export default function HomePage() {

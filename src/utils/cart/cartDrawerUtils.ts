@@ -146,3 +146,4 @@ export function handleItemTaxToggleUtil({
   // * toggle the taxable status of the item
   toggleItemTax(itemId, is_taxable);
 }
+

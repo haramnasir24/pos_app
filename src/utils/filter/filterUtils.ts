@@ -1,4 +1,4 @@
-export type CategoryObj = { id: string; name: string };
+import { CategoryObject } from "@/types/product";
 
 /**
  * Toggles a category in the selected list
@@ -7,9 +7,9 @@ export type CategoryObj = { id: string; name: string };
  * @returns Updated selected categories array
  */
 export const toggleCategory = (
-  category: CategoryObj,
-  selected: CategoryObj[]
-): CategoryObj[] => {
+  category: CategoryObject,
+  selected: CategoryObject[]
+): CategoryObject[] => {
   return selected.some((c) => c.id === category.id)
     ? selected.filter((c) => c.id !== category.id)
     : [...selected, category];
@@ -22,8 +22,8 @@ export const toggleCategory = (
  * @returns True if category is selected, false otherwise
  */
 export const isCategorySelected = (
-  category: CategoryObj,
-  selected: CategoryObj[]
+  category: CategoryObject,
+  selected: CategoryObject[]
 ): boolean => {
   return selected.some((c) => c.id === category.id);
 };
@@ -32,7 +32,7 @@ export const isCategorySelected = (
  * Clears all selected categories
  * @returns Empty array
  */
-export const clearSelectedCategories = (): CategoryObj[] => {
+export const clearSelectedCategories = (): CategoryObject[] => {
   return [];
 };
 
@@ -41,7 +41,7 @@ export const clearSelectedCategories = (): CategoryObj[] => {
  * @param categories - Array of category objects
  * @returns Array of category IDs
  */
-export const getCategoryIds = (categories: CategoryObj[]): string[] => {
+export const getCategoryIds = (categories: CategoryObject[]): string[] => {
   return categories.map((category) => category.id);
 };
 
@@ -50,7 +50,7 @@ export const getCategoryIds = (categories: CategoryObj[]): string[] => {
  * @param categories - Array of category objects
  * @returns Array of category names
  */
-export const getCategoryNames = (categories: CategoryObj[]): string[] => {
+export const getCategoryNames = (categories: CategoryObject[]): string[] => {
   return categories.map((category) => category.name);
 };
 
@@ -60,7 +60,10 @@ export const getCategoryNames = (categories: CategoryObj[]): string[] => {
  * @param {Record<string, any>} prevParams - Previous params object.
  * @returns {Record<string, any>} The new params object for setParams.
  */
-export function buildCategoryFilterParams(selected: CategoryObj[], prevParams: Record<string, any>): Record<string, any> {
+export function buildCategoryFilterParams(
+  selected: CategoryObject[],
+  prevParams: Record<string, any>
+): Record<string, any> {
   if (selected && selected.length > 0) {
     return {
       ...prevParams,
