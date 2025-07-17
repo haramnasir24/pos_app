@@ -1,4 +1,4 @@
-import DashboardContainer from "@/containers/dashboard/DashboardContainer";
+import { DashboardContainer } from "@/containers/DashboardContainer";
 
 /**
  * Dashboard page for authenticated users.

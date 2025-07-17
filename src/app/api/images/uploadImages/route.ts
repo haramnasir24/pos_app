@@ -4,8 +4,8 @@ import fs from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { apiFetch } from "@/utils/apiFetch";
-import { API_CONFIG } from "@/constants/api";
+import { apiFetch } from "@/shared/utils/apiFetch";
+import { API_CONFIG } from "@/shared/constants/api";
 
 const IMAGES_DIR = path.join(process.cwd(), "images_jpg");
 const OUT_JSON = path.join(process.cwd(), "square_image_ids.json");

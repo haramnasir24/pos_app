@@ -2,7 +2,7 @@ import { promises as fs } from "fs";
 import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 import { v4 as uuidv4 } from "uuid";
-import { apiFetch } from "@/utils/apiFetch";
+import { apiFetch } from "@/shared/utils/apiFetch";
 import { API_CONFIG } from "@/constants/api";
 
 // * helper to map a product to Square CatalogObject format, accepts imageId

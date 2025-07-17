@@ -1,6 +1,6 @@
 // gateway that connects Next.js app to the Auth.js authentication system
 
-import { API_CONFIG } from "@/constants/api";
+import { API_CONFIG } from "@/shared/constants/api";
 import type { NextAuthOptions } from "next-auth";
 import NextAuth from "next-auth";
 

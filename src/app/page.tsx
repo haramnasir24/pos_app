@@ -1,9 +1,9 @@
 "use client";
 
-import Authenticated from "@/components/home/auth/Authenticated";
-import SignInButton from "@/components/home/signin/SignInButton";
-import SignInText from "@/components/home/signin/SignInText";
-import HomeLoader from "@/components/ui/HomeLoader";
+import Authenticated from "@/components/composites/home/auth/Authenticated";
+import SignInButton from "@/components/composites/home/signin/SignInButton";
+import SignInText from "@/components/composites/home/signin/SignInText";
+import HomeLoader from "@/components/primitives/HomeLoader";
 import { useSession } from "next-auth/react";
 import { css } from "~/styled-system/css";
 

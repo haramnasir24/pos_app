@@ -1,8 +1,8 @@
 import "./globals.css";
 
-import { CartContextProvider } from "../context/CartContext";
-import { SessionProviders } from "@/components/providers/SessionProvider";
-import { QueryProvider } from "@/components/providers/QueryProvider";
+import { CartContextProvider } from "../shared/context/CartContext";
+import { SessionProviders } from "@/shared/providers/SessionProvider";
+import { QueryProvider } from "@/shared/providers/QueryProvider";
 
 export default function RootLayout({
   children,

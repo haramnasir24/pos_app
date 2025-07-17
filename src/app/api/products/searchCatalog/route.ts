@@ -2,8 +2,8 @@
 // server side rendering
 
 import { NextRequest, NextResponse } from "next/server";
-import { apiFetch } from "@/utils/apiFetch";
-import { API_CONFIG } from "@/constants/api";
+import { apiFetch } from "@/shared/utils/apiFetch";
+import { API_CONFIG } from "@/shared/constants/api";
 
 export async function POST(req: NextRequest) {
   const { object_types, query, include_related_objects } = await req.json();

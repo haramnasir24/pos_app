@@ -1,8 +1,8 @@
 // * api endpoint for getting the inventory count
 
 import { NextRequest, NextResponse } from "next/server";
-import { apiFetch } from "@/utils/apiFetch";
-import { API_CONFIG } from "@/constants/api";
+import { apiFetch } from "@/shared/utils/apiFetch";
+import { API_CONFIG } from "@/shared/constants/api";
 
 export async function POST(req: NextRequest) {
   try {
